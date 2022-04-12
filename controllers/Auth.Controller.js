@@ -43,13 +43,13 @@ module.exports = {
 
     // Hash passwords
     var hashedPassword = await CryptoJS.SHA256(
-      req.body.password + process.env.HASH_PASS_USER
+      req.body.passWord + process.env.HASH_PASS_USER
     ).toString(CryptoJS.enc.Hex);
 
     var user = {
       name: req.body.name,
       email: req.body.email,
-      password: hashedPassword,
+      passWord: hashedPassword,
       avatar: `https://ui-avatars.com/api/?name=${req.body.name}`,
       phoneNumber: req.body.phoneNumber,
     };
@@ -59,12 +59,12 @@ module.exports = {
       console.log(
         `payme call [USER] >> [SIGNUP] response ${JSON.stringify(response)}`
       );
-      response.code = 200;
+      response.statusCode = 200;
       response.message = 'Đăng ký tài khoản thành công!'
       res.send(response);
     } catch (err) {
       console.log(err);
-      response.code = 500;
+      response.statusCode = 500;
       response.message = 'Internal Server Error'
       res.send(response);
     }

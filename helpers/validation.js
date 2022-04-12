@@ -18,12 +18,11 @@ const registerValidation = data => {
         //     .max(30)
         //     .required(),
 
-        password: Joi.string()
+        passWord: Joi.string()
             .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
         
         phoneNumber: Joi.number(),
 
-        repeat_password: Joi.ref('password')
     })
     return schema.validate(data);
 }
