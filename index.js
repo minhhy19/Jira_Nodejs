@@ -1,10 +1,11 @@
 var express = require('express');
 var cors = require('cors');
+var dotenv = require('dotenv');
+dotenv.config();
+require('./helpers/init_mongodb')
 
 var app = express();
 
-var dotenv = require('dotenv');
-dotenv.config();
 var PORT = process.env.PORT || 5500;
 
 
