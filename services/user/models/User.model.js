@@ -73,5 +73,4 @@ Schema.plugin(autoIncrement.plugin, {
 //   }
 // }
 
-const User = mongoose.model(Schema.options.collection, Schema)
-module.exports = User
+module.exports = mongoose.model(Schema.options.collection, Schema);

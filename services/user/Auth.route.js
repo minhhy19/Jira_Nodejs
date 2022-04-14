@@ -1,6 +1,6 @@
 var router = require('express').Router();
-var authController = require('../controllers/Auth.Controller');
-const { verifyAccessToken } = require('../helpers/jwt_helpers');
+var authController = require('./controllers/Auth.Controller');
+const { verifyAccessToken } = require('../../helpers/jwt_helpers');
 
 
 

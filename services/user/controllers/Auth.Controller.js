@@ -1,37 +1,36 @@
 // var UserModel = require('../models/User.model.js');
 const _ = require('lodash');
 var CryptoJS = require('crypto-js');
-var createError = require('http-errors');
 var {
 	registerValidation,
 	loginValidation,
 	editUserValidation
-} = require('../helpers/validationUser');
+} = require('../validations/user.validation');
 var {
 	signAccessToken,
 	signRefreshToken,
 	verifyRefreshToken
-} = require('../helpers/jwt_helpers');
-var TokenModel = require('../models/Token.model');
-const User = require('../models/User.model');
+} = require('../../../helpers/jwt_helpers');
+// var TokenModel = require('../models/Token.model');
+const UserModel = require('../models/User.model');
 
 module.exports = {
 	signup: async (req, res) => {
+		const { email, passWord, name, phoneNumber } = req.body;
+		const response = {
+			statusCode: 400,
+			message: 'Đăng ký tài khoản thất bại!',
+			content: {
+				email,
+				passWord,
+				name,
+				phoneNumber
+			}
+		};
 		try {
-			const { email, passWord, name, phoneNumber } = req.body;
 			console.log(`[USER] >> [SIGNUP] payload ${JSON.stringify(req.body)}`);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
 			var { error } = registerValidation(req.body);
-			const response = {
-				statusCode: 400,
-				message: 'Đăng ký tài khoản thất bại!',
-				content: {
-					email,
-					passWord,
-					name,
-					phoneNumber
-				}
-			};
 
 			if (error) {
 				console.log(`[ERROR USER] [SIGNUP] `, JSON.stringify(error));
@@ -40,7 +39,7 @@ module.exports = {
 			}
 
 			//Checking if the user is already in the database
-			var emailExist = await User.findOne({ email });
+			var emailExist = await UserModel.findOne({ email });
 			if (emailExist) {
 				console.log('[ERROR USER] [SIGNUP] Email đã được sử dụng!');
 				response.message = 'Email đã được sử dụng!';
@@ -60,7 +59,7 @@ module.exports = {
 				phoneNumber
 			};
 
-			var saveUser = await User.create(user);
+			var saveUser = await UserModel.create(user);
 			response.statusCode = 200;
 			response.message = 'Đăng ký tài khoản thành công!';
 			console.log(`[USER] >> [SIGNUP] response ${JSON.stringify(response)}`);
@@ -95,7 +94,7 @@ module.exports = {
 			}
 
 			// Checking if the email exist
-			var user = await User.findOne({ email });
+			var user = await UserModel.findOne({ email });
 			if (!user) {
 				console.log('[ERROR USER] [SIGNIN] Email is wrong!');
 				response.message = 'Email is wrong!';
@@ -164,7 +163,7 @@ module.exports = {
 			}
 
 			// Kiểm tra user trong db
-			const userExist = await User.findOne({ userId: id });
+			const userExist = await UserModel.findOne({ userId: id });
 			if (!userExist) {
 				console.log(
 					'[ERROR USER] [EDIT USER] Không tìm thấy thông tin tài khoản'
@@ -174,7 +173,7 @@ module.exports = {
 			}
 
 			//Checking if the user is already in the database
-			const emailExist = await User.findOne({
+			const emailExist = await UserModel.findOne({
 				email,
 				userId: {
 					$ne: userExist.userId
@@ -193,7 +192,7 @@ module.exports = {
 
 			console.log(hashedPassword);
 
-			const updated = await User.updateOne(
+			const updated = await UserModel.updateOne(
 				{ userId: userExist.userId },
 				{
 					email,
@@ -236,14 +235,18 @@ module.exports = {
 
 			// Nếu tài khoản xóa khác với tài khoản đã đăng nhập thì trả lỗi 401
 			if (id !== req.user.aud) {
-				console.log('[ERROR USER] [DELETE USER] Tài khoản khác với tài khoản đã đăng nhập');
+				console.log(
+					'[ERROR USER] [DELETE USER] Tài khoản khác với tài khoản đã đăng nhập'
+				);
 				return res.status(401).send('Access Denied');
 			}
 
-			const deleted = await User.deleteOne({ userId: id });
+			const deleted = await UserModel.deleteOne({ userId: id });
 
 			if (!deleted || deleted.deletedCount < 1) {
-				console.log('[ERROR USER] [DELETE USER] Xóa tài khoản thất bại, vui lòng thử lại');
+				console.log(
+					'[ERROR USER] [DELETE USER] Xóa tài khoản thất bại, vui lòng thử lại'
+				);
 				response.message = 'Xóa tài khoản thất bại, vui lòng thử lại';
 				return res.send(response);
 			}

@@ -10,12 +10,15 @@ const registerValidation = data => {
             .required(),
 
         email: Joi.string()
-            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+            .required(),
 
         passWord: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+            .required(),
         
-        phoneNumber: Joi.number(),
+        phoneNumber: Joi.number()
+            .required(),
 
     })
     return schema.validate(data);
@@ -25,10 +28,12 @@ const registerValidation = data => {
 const loginValidation = data => {
     const schema = Joi.object({
         email: Joi.string()
-            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+            .required(),
 
         passWord: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+            .required(),
     })
     return schema.validate(data);
 }
@@ -44,12 +49,15 @@ const editUserValidation = data => {
             .required(),
 
         email: Joi.string()
-            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+            .required(),
 
         passWord: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+            .required(),
 
-        phoneNumber: Joi.number(),
+        phoneNumber: Joi.number()
+            .required(),
     })
     return schema.validate(data);
 }
