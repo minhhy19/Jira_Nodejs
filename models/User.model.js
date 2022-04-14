@@ -34,6 +34,8 @@ const Schema = mongoose.Schema({
 	timestamps: true
 })
 
+Schema.index({ email: 1 });
+
 /*
 | ==========================================================
 | Plugins

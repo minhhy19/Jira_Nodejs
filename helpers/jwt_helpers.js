@@ -3,12 +3,11 @@ var TokenModel = require('../models/Token.model');
 
 
 module.exports = {
-    signAccessToken: (userId) => {
+    signAccessToken: (userId, payload) => {
         return new Promise((resolve, reject) => {
-            var payload = {};
             var secret = process.env.ACCESS_TOKEN_SECRET
             var options = {
-                expiresIn: '15s',
+                expiresIn: '2d',
                 audience: userId
             }
             jwt.sign(payload, secret, options, (err, token) => {
@@ -22,17 +21,18 @@ module.exports = {
         });
     },
     verifyAccessToken: (req, res, next) => {
-        // var token = req.header('auth-token');
-        var token = req.headers['authorization'];
+        let token = req.headers['authorization'];
         if (!token) return res.status(401).send('Access Denied');
+        token = token.split(' ')[1];
 
         try {
             var verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
             req.user = verified;
             next();
         } catch (err) {
-            // res.status(400).send('Invalid Token')
-            res.send({ code: '400', msg: err });
+            console.log(`[VERIFY ACCESS TOKEN] >> [ERROR] ${JSON.stringify(err)}`);
+            res.status(400).send('Invalid Token');
+            // res.send({ statusCode: 400, message: err });
         }
     },
     signRefreshToken: (userId) => {
