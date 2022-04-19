@@ -3,6 +3,6 @@ var projectCategoryController = require('./controllers/ProjectCategory.Controlle
 var { verifyAccessToken } = require('../../helpers/jwt_helpers');
 
 router.get('/', projectCategoryController.getAllCategory);
-router.post('/createProjectCategory', projectCategoryController.createProjectCategory);
+// router.post('/createProjectCategory', projectCategoryController.createProjectCategory);
 
 module.exports = router;

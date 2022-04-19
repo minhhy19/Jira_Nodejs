@@ -40,8 +40,7 @@ const Schema = mongoose.Schema({
 	timestamps: true
 })
 
-Schema.index({ alias: 1 });
-Schema.index({ projectName: 1 });
+Schema.index({ projectName: 'text', alias: 'text' });
 
 /*
 | ==========================================================

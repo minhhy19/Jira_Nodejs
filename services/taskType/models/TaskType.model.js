@@ -1,22 +1,23 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
-const bcrypt = require('bcrypt')
 
 autoIncrement.initialize(mongoose);
 
-const Schema = mongoose.Schema({
-  projectCategoryName: {
-    type: String,
-    required: true
-  },
-},
-{
-	collection: 'ProjectCategory',
-	versionKey: false,
-	timestamps: true
-})
+const Schema = mongoose.Schema(
+	{
+		taskType: {
+			type: String,
+			required: true
+		}
+	},
+	{
+		collection: 'TaskType',
+		versionKey: false,
+		timestamps: true
+	}
+);
 
-Schema.index({ projectCategoryName: 1 });
+Schema.index({ taskType: 1 });
 
 /*
 | ==========================================================

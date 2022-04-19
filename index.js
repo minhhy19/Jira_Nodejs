@@ -15,6 +15,10 @@ const auth = require('./services/user/Auth.route');
 const project = require('./services/project/Project.route');
 const projectCategory = require('./services/project/ProjectCategory.route');
 
+const status = require('./services/status/Status.route');
+const priority = require('./services/priority/Priority.route');
+const taskType = require('./services/taskType/TaskType.route')
+
 // Middleware
 app.use(express.json());
 
@@ -22,6 +26,10 @@ app.use(express.json());
 app.use('/users', auth);
 app.use('/project', project);
 app.use('/projectCategory', projectCategory);
+
+app.use('/priority', priority);
+app.use('/status', status);
+app.use('/taskType', taskType);
 
 
 app.listen(PORT, () => console.log('Server up and running on PORT ' + PORT));
