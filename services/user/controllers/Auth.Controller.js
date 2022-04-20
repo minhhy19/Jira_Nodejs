@@ -172,7 +172,7 @@ module.exports = {
 				return res.send(response);
 			}
 
-			//Checking if the user is already in the database
+			// Checking if the user is already in the database
 			const emailExist = await UserModel.findOne({
 				email,
 				userId: {
@@ -203,8 +203,8 @@ module.exports = {
 			);
 
 			if (!updated) {
-				response.message =
-					'Cập nhật thông tin tài khoản thất bại, vui lòng thử lại';
+				console.log('[ERROR USER] [EDIT USER] Cập nhật thông tin tài khoản thất bại, vui lòng thử lại');
+				response.message = 'Cập nhật thông tin tài khoản thất bại, vui lòng thử lại';
 				return res.send(response);
 			}
 
@@ -221,7 +221,7 @@ module.exports = {
 	},
 
 	deleteUser: async (req, res) => {
-		const id = req.query.id;
+		const { id } = req.query;
 		const response = {
 			statusCode: 400,
 			message: 'Xóa tài khoản thất bại',
