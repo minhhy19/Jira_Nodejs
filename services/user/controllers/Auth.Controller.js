@@ -1,22 +1,22 @@
 // var UserModel = require('../models/User.model.js');
 const _ = require('lodash');
-var CryptoJS = require('crypto-js');
-var {
+const CryptoJS = require('crypto-js');
+const {
 	registerValidation,
 	loginValidation,
 	editUserValidation
 } = require('../validations/user.validation');
-var {
-	signAccessToken,
-	signRefreshToken,
-	verifyRefreshToken
+const {
+	signAccessToken
 } = require('../../../helpers/jwt_helpers');
 // var TokenModel = require('../models/Token.model');
 const UserModel = require('../models/User.model');
 
 module.exports = {
 	signup: async (req, res) => {
-		const { email, passWord, name, phoneNumber } = req.body;
+		const {
+			email, passWord, name, phoneNumber
+		} = req.body;
 		const response = {
 			statusCode: 400,
 			message: 'Đăng ký tài khoản thất bại!',
@@ -30,16 +30,16 @@ module.exports = {
 		try {
 			console.log(`[USER] >> [SIGNUP] payload ${JSON.stringify(req.body)}`);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
-			var { error } = registerValidation(req.body);
+			const { error } = registerValidation(req.body);
 
 			if (error) {
-				console.log(`[ERROR USER] [SIGNUP] `, JSON.stringify(error));
+				console.log('[ERROR USER] [SIGNUP] ', JSON.stringify(error));
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
 
-			//Checking if the user is already in the database
-			var emailExist = await UserModel.findOne({ email });
+			// Checking if the user is already in the database
+			const emailExist = await UserModel.findOne({ email });
 			if (emailExist) {
 				console.log('[ERROR USER] [SIGNUP] Email đã được sử dụng!');
 				response.message = 'Email đã được sử dụng!';
@@ -51,7 +51,7 @@ module.exports = {
 				passWord + process.env.HASH_PASS_USER
 			).toString(CryptoJS.enc.Hex);
 
-			var user = {
+			const user = {
 				name,
 				email,
 				passWord: hashedPassword,
@@ -59,13 +59,13 @@ module.exports = {
 				phoneNumber
 			};
 
-			var saveUser = await UserModel.create(user);
+			const saveUser = await UserModel.create(user);
 			response.statusCode = 200;
 			response.message = 'Đăng ký tài khoản thành công!';
 			console.log(`[USER] >> [SIGNUP] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			console.log(`[ERROR USER] [SIGNUP] `, JSON.stringify(err));
+			console.log('[ERROR USER] [SIGNUP] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -83,30 +83,30 @@ module.exports = {
 			}
 		};
 		try {
-			console.log(`[USER] >> [SIGNIN] payload ${JSON.stringify(req.body)}`);
+			console.log(`[USER] >> [SIGN IN] payload ${JSON.stringify(req.body)}`);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
 			const { error } = loginValidation(req.body);
 
 			if (error) {
-				console.log(`[ERROR USER] [SIGNUP] `, JSON.stringify(error));
+				console.log('[ERROR USER] [SIGNUP] ', JSON.stringify(error));
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
 
 			// Checking if the email exist
-			var user = await UserModel.findOne({ email });
+			const user = await UserModel.findOne({ email });
 			if (!user) {
-				console.log('[ERROR USER] [SIGNIN] Email is wrong!');
+				console.log('[ERROR USER] [SIGN IN] Email is wrong!');
 				response.message = 'Email is wrong!';
 				return res.send(response);
 			}
 
 			// PASSWORD IS CORRECT
-			var hashedPassword = await CryptoJS.SHA256(
+			const hashedPassword = await CryptoJS.SHA256(
 				passWord + process.env.HASH_PASS_USER
 			).toString(CryptoJS.enc.Hex);
 			if (hashedPassword !== user.passWord) {
-				console.log('[ERROR USER] [SIGNIN] Invalid password');
+				console.log('[ERROR USER] [SIGN IN] Invalid password');
 				response.message = 'Invalid password';
 				return res.send(response);
 			}
@@ -118,7 +118,7 @@ module.exports = {
 				'phoneNumber',
 				'name'
 			]);
-			var accessToken = await signAccessToken(
+			const accessToken = await signAccessToken(
 				_.toString(user.userId),
 				dataUserInternal
 			);
@@ -133,10 +133,10 @@ module.exports = {
 					accessToken
 				}
 			};
-			console.log(`[USER] >> [SIGNIN] response ${JSON.stringify(response)}`);
+			console.log(`[USER] >> [SIGN IN] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (error) {
-			console.log(`[ERROR USER] [SIGNIN] `, JSON.stringify(error));
+			console.log('[ERROR USER] [SIGN IN] ', JSON.stringify(error));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -144,7 +144,9 @@ module.exports = {
 	},
 
 	editUser: async (req, res) => {
-		const { id, email, passWord, name, phoneNumber } = req.body;
+		const {
+			id, email, passWord, name, phoneNumber
+		} = req.body;
 		const response = {
 			statusCode: 400,
 			message: 'Cập nhật thông tin tài khoản thất bại',
@@ -157,7 +159,7 @@ module.exports = {
 			const { error } = editUserValidation(req.body);
 
 			if (error) {
-				console.log(`[ERROR USER] [EDIT USER] `, JSON.stringify(error));
+				console.log('[ERROR USER] [EDIT USER] ', JSON.stringify(error));
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -213,7 +215,7 @@ module.exports = {
 			console.log(`[USER] >> [EDIT USER] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			console.log(`[ERROR USER] [EDIT USER] `, JSON.stringify(err));
+			console.log('[ERROR USER] [EDIT USER] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -265,55 +267,55 @@ module.exports = {
 		}
 	},
 
-	refreshToken: async (req, res) => {
-		try {
-			var { refreshToken } = req.body;
-			// if (!refreshToken) throw createError.BadRequest();
-			if (!refreshToken) throw '400';
+	// refreshToken: async (req, res) => {
+	// 	try {
+	// 		const { refreshToken } = req.body;
+	// 		// if (!refreshToken) throw createError.BadRequest();
+	// 		if (!refreshToken) throw '400';
 
-			var checkTokenDb = await TokenModel.getTokenByRefreshToken(refreshToken);
-			if (!checkTokenDb) throw '403';
+	// 		const checkTokenDb = await TokenModel.getTokenByRefreshToken(refreshToken);
+	// 		if (!checkTokenDb) throw '403';
 
-			var userId = await verifyRefreshToken(refreshToken);
-			var accessToken = await signAccessToken(userId);
-			// var refreshToken = await signRefreshToken(userId);
-			res
-				.header('authorization', accessToken)
-				.send({ code: '200', msg: { accessToken } });
-		} catch (err) {
-			if (err === '400') {
-				res.send({ code: '400', msg: 'No Refresh Token' });
-			} else if (err === '403') {
-				res.send({ code: '403', msg: 'Forbidden' });
-			} else {
-				res.send({ code: '500', msg: err });
-			}
-		}
-	},
+	// 		const userId = await verifyRefreshToken(refreshToken);
+	// 		const accessToken = await signAccessToken(userId);
+	// 		// var refreshToken = await signRefreshToken(userId);
+	// 		res
+	// 			.header('authorization', accessToken)
+	// 			.send({ code: '200', msg: { accessToken } });
+	// 	} catch (err) {
+	// 		if (err === '400') {
+	// 			res.send({ code: '400', msg: 'No Refresh Token' });
+	// 		} else if (err === '403') {
+	// 			res.send({ code: '403', msg: 'Forbidden' });
+	// 		} else {
+	// 			res.send({ code: '500', msg: err });
+	// 		}
+	// 	}
+	// },
 
-	logout: async (req, res, next) => {
-		try {
-			var { refreshToken } = req.body;
-			if (!refreshToken) throw '400';
+	// logout: async (req, res, next) => {
+	// 	try {
+	// 		const { refreshToken } = req.body;
+	// 		if (!refreshToken) throw '400';
 
-			var userId = await verifyRefreshToken(refreshToken);
+	// 		const userId = await verifyRefreshToken(refreshToken);
 
-			// delete refresh token
-			var a = await TokenModel.getTokenByIdUser(userId);
-			var arr = a.value.filter((ref) => ref !== refreshToken);
-			await TokenModel.updateTokenByIdUser(userId, { value: arr });
-			// var deleteToken = await TokenModel.deleteTokenByUserId(userId);
-			// console.log(userId);
-			// console.log(deleteToken);
-			res.send({ code: '200', msg: 'success' });
-		} catch (error) {
-			if (error === '400') {
-				res.send({ code: '400', msg: 'No Refresh Token' });
-			} else if (error === '403') {
-				res.send({ code: '403', msg: 'Forbidden' });
-			} else {
-				res.send({ code: '500', msg: error });
-			}
-		}
-	}
+	// 		// delete refresh token
+	// 		const a = await TokenModel.getTokenByIdUser(userId);
+	// 		const arr = a.value.filter((ref) => ref !== refreshToken);
+	// 		await TokenModel.updateTokenByIdUser(userId, { value: arr });
+	// 		// var deleteToken = await TokenModel.deleteTokenByUserId(userId);
+	// 		// console.log(userId);
+	// 		// console.log(deleteToken);
+	// 		res.send({ code: '200', msg: 'success' });
+	// 	} catch (error) {
+	// 		if (error === '400') {
+	// 			res.send({ code: '400', msg: 'No Refresh Token' });
+	// 		} else if (error === '403') {
+	// 			res.send({ code: '403', msg: 'Forbidden' });
+	// 		} else {
+	// 			res.send({ code: '500', msg: error });
+	// 		}
+	// 	}
+	// }
 };

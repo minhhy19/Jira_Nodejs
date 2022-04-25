@@ -4,7 +4,15 @@ const {
 	createValidation,
 	editValidation,
 	createTaskValidation,
-	assignUserProjectValidation
+	assignUserProjectValidation,
+	updateTaskValidation,
+	assignUserTaskValidation,
+	removeUserTaskValidation,
+	updateStatusValidation,
+	updatePriorityValidation,
+	updateDescriptionValidation,
+	updateTimeTrackingValidation,
+	updateEstimateValidation
 } = require('../validations/project.validation');
 const { removeUnicode } = require('../helpers/removeUnicode');
 const ProjectModel = require('../models/Project.model');
@@ -688,5 +696,784 @@ module.exports = {
 			response.message = 'Internal Server Error';
 			return res.send(response);
 		}
-	}
+	},
+
+	updateTask: async (req, res) => {
+		const {
+			listUserAsign,
+			taskId,
+			taskName,
+			description,
+			statusId,
+			originalEstimate,
+			timeTrackingSpent,
+			timeTrackingRemaining,
+			projectId,
+			typeId,
+			priorityId
+		} = req.body;
+
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log(
+				`[PROJECT] >> [UPDATE TASK] payload ${JSON.stringify(req.body)}`
+			);
+			// LETS VALIDATE THE DATA BEFORE WE A USER
+			const { error } = updateTaskValidation(req.body);
+
+			if (error) {
+				console.log('[ERROR PROJECT] [UPDATE TASK] ', JSON.stringify(error));
+				response.message = error.details[0].message;
+				return res.send(response);
+			}
+
+			const task = await TaskModel.findOne({ taskId });
+			if (!task) {
+				console.log('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy task!');
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			// Checking if the task name is already in the database
+			const taskNameExist = await TaskModel.findOne({
+				taskName,
+				taskId: { $ne: task.taskId }
+			});
+			if (taskNameExist) {
+				console.log('[ERROR PROJECT] [UPDATE TASK] Tên task đã được sử dụng!');
+				response.message = 'Tên task đã được sử dụng!';
+				return res.send(response);
+			}
+
+			const userAction = {
+				id: _.toNumber(req.user.aud),
+				name: req.user.name
+			};
+
+			const project = await ProjectModel.findOne({ id: projectId });
+			if (!project) {
+				console.log('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy project!');
+				response.message = 'Không tìm thấy project!';
+				return res.send(response);
+			}
+
+			if (userAction.id !== project.creator.id) {
+				console.log('[ERROR PROJECT] [UPDATE TASK] Không đủ quyền truy cập!!');
+				response.message = 'Không đủ quyền truy cập!';
+				return res.send(response);
+			}
+
+			const status = await StatusModel.findOne({ statusId });
+			if (!status) {
+				console.log('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy status!');
+				response.message = 'Không tìm thấy status!';
+				return res.send(response);
+			}
+
+			const taskType = await TaskTypeModel.findOne({ id: typeId });
+			if (!taskType) {
+				console.log('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy task type!');
+				response.message = 'Không tìm thấy task type!';
+				return res.send(response);
+			}
+
+			const priority = await PriorityModel.findOne({ priorityId });
+			if (!priority) {
+				console.log('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy priority!');
+				response.message = 'Không tìm thấy priority!';
+				return res.send(response);
+			}
+
+			const userAssign = await UserModel.find({
+				userId: {
+					$in: listUserAsign
+				}
+			});
+
+			const assigness = userAssign.map((user) => ({
+				id: user.userId,
+				avatar: user.avatar,
+				name: user.name,
+				alias: user.name
+			}));
+
+			const taskDataUpdate = {
+				priorityTask: _.pick(priority, ['priorityId', 'priority']),
+				taskTypeDetail: _.pick(taskType, ['id', 'taskType']),
+				assigness,
+				taskName,
+				alias: removeUnicode(taskName),
+				description,
+				statusId,
+				originalEstimate,
+				timeTrackingSpent,
+				timeTrackingRemaining,
+				typeId,
+				priorityId,
+				projectId
+			};
+
+			const updateTask = await TaskModel.findOneAndUpdate(
+				{ taskId },
+				taskDataUpdate,
+				{ new: true }
+			);
+			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
+				console.log('[ERROR PROJECT] [UPDATE TASK] Cập nhật task không thành công!');
+				return res.send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Cập nhật task thành công!';
+			response.content = {
+				..._.pick(updateTask, [
+					'taskId',
+					'taskName',
+					'alias',
+					'description',
+					'statusId',
+					'originalEstimate',
+					'timeTrackingSpent',
+					'timeTrackingRemaining',
+					'projectId',
+					'typeId',
+					'deleted',
+					'priorityId'
+				]),
+				reporterId: userAction.id
+			};
+			console.log(
+				`[PROJECT] >> [UPDATE TASK] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log(err);
+			console.log('[ERROR PROJECT] [UPDATE TASK] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	getTaskDetail: async (req, res) => {
+		const taskId = _.get(req, 'query.taskId', null);
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log('[PROJECT] >> [GET TASK DETAIL]');
+
+			if (taskId === null) {
+				console.log(
+					'[ERROR PROJECT] [GET TASK DETAIL] Không tìm thấy task!'
+				);
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const taskDetail = await TaskModel.findOne({ taskId });
+			if (!taskDetail) {
+				console.log(
+					'[ERROR PROJECT] [GET TASK DETAIL] Không tìm thấy task!'
+				);
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Lấy chi tiết task thành công!';
+			response.content = {
+				..._.pick(taskDetail, [
+					'priorityTask',
+					'taskTypeDetail',
+					'assigness',
+					'lstComment',
+					'taskId',
+					'taskName',
+					'alias',
+					'description',
+					'statusId',
+					'originalEstimate',
+					'timeTrackingSpent',
+					'timeTrackingRemaining',
+					'typeId',
+					'priorityId',
+					'projectId'
+				])
+			};
+			console.log(
+				`[PROJECT] >> [GET TASK DETAIL] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log('[ERROR PROJECT] [GET TASK DETAIL] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	removeTask: async (req, res) => {
+		const taskId = _.get(req, 'query.taskId', null);
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log('[PROJECT] >> [REMOVE TASK]');
+
+			const userAction = {
+				id: _.toNumber(req.user.aud),
+				name: req.user.name
+			};
+
+			if (taskId === null) {
+				console.log(
+					'[ERROR PROJECT] [REMOVE TASK] Không tìm thấy task!'
+				);
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const task = await TaskModel.findOne({ taskId });
+			if (!task) {
+				console.log(
+					'[ERROR PROJECT] [REMOVE TASK] Không tìm thấy task!'
+				);
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const project = await ProjectModel.findOne({ id: task.projectId });
+			if (userAction.id !== project.creator.id) {
+				console.log('[ERROR PROJECT] [REMOVE TASK] Không đủ quyền truy cập!!');
+				response.message = 'Không đủ quyền truy cập!';
+				return res.send(response);
+			}
+
+			const taskDeleted = await TaskModel.deleteOne({ taskId });
+			if (!taskDeleted || taskDeleted.deletedCount < 1) {
+				console.log(
+					'[ERROR PROJECT] [REMOVE TASK] Xóa task thất bại, vui lòng thử lại'
+				);
+				response.message = 'Xóa task thất bại, vui lòng thử lại';
+				return res.send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Xóa task thành công!';
+			console.log(
+				`[PROJECT] >> [REMOVE TASK] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log('[ERROR PROJECT] [REMOVE TASK] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	assignUserTask: async (req, res) => {
+		const {
+			taskId, userId
+		} = req.body;
+
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log(`[PROJECT] >> [ASSIGN USER TASK] payload ${JSON.stringify(req.body)}`);
+			const { error } = assignUserTaskValidation(req.body);
+			if (error) {
+				console.log('[ERROR PROJECT] [ASSIGN USER TASK] ', JSON.stringify(error));
+				response.message = error.details[0].message;
+				return res.send(response);
+			}
+
+			const task = await TaskModel.findOne({ taskId });
+			if (!task) {
+				console.log('[ERROR PROJECT] [ASSIGN USER TASK] Không tìm thấy task!');
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const project = await ProjectModel.findOne({ id: task.projectId });
+			if (!project) {
+				console.log('[ERROR PROJECT] [ASSIGN USER TASK] Không tìm thấy project!');
+				response.message = 'Không tìm thấy project!';
+				return res.send(response);
+			}
+
+			if (_.toNumber(req.user.aud) !== project.creator.id) {
+				console.log('[ERROR PROJECT] [ASSIGN USER TASK] Không đủ quyền truy cập!');
+				response.message = 'Không đủ quyền truy cập!';
+				return res.send(response);
+			}
+
+			const user = await UserModel.findOne({ userId });
+			if (!user) {
+				console.log('[ERROR PROJECT] [ASSIGN USER TASK] Không tìm thấy user!');
+				response.message = 'Không tìm thấy user!';
+				return res.send(response);
+			}
+
+			const arrAssignessIdInTask = task.assigness.map((mem) => (mem.id));
+
+			if (_.includes(arrAssignessIdInTask, userId)) {
+				console.log('[ERROR PROJECT] [ASSIGN USER TASK] User already assign in the task!');
+				response.message = 'User already assign in the task!';
+				return res.send(response);
+			}
+
+			const userAssignToTask = {
+				id: user.userId,
+				..._.pick(user, ['avatar', 'name']),
+				alias: user.name
+			};
+
+			const assignUserToTask = await TaskModel.updateOne({ taskId }, {
+				$push: {
+					assigness: userAssignToTask
+				}
+			});
+
+			if (!assignUserToTask) {
+				console.log('[ERROR PROJECT] [ASSIGN USER TASK] Cập nhật thất bại, vui lòng thử lại');
+				response.message = 'Cập nhật thất bại, vui lòng thử lại';
+				return res.send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Has added the user to the task !';
+			console.log(`[PROJECT] >> [ASSIGN USER TASK] response ${JSON.stringify(response)}`);
+			return res.send(response);
+		} catch (err) {
+			console.log(err);
+			console.log('[ERROR PROJECT] [ASSIGN USER TASK] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	removeUserFromTask: async (req, res) => {
+		const {
+			taskId, userId
+		} = req.body;
+
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log(`[PROJECT] >> [REMOVE USER TASK] payload ${JSON.stringify(req.body)}`);
+			const { error } = removeUserTaskValidation(req.body);
+			if (error) {
+				console.log('[ERROR PROJECT] [REMOVE USER TASK] ', JSON.stringify(error));
+				response.message = error.details[0].message;
+				return res.send(response);
+			}
+
+			const task = await TaskModel.findOne({ taskId });
+			if (!task) {
+				console.log('[ERROR PROJECT] [REMOVE USER TASK] Không tìm thấy task!');
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const project = await ProjectModel.findOne({ id: task.projectId });
+			if (!project) {
+				console.log('[ERROR PROJECT] [REMOVE USER TASK] Không tìm thấy project!');
+				response.message = 'Không tìm thấy project!';
+				return res.send(response);
+			}
+
+			if (_.toNumber(req.user.aud) !== project.creator.id) {
+				console.log('[ERROR PROJECT] [REMOVE USER TASK] Không đủ quyền truy cập!');
+				response.message = 'Không đủ quyền truy cập!';
+				return res.send(response);
+			}
+
+			const user = await UserModel.findOne({ userId });
+			if (!user) {
+				console.log('[ERROR PROJECT] [REMOVE USER TASK] Không tìm thấy user!');
+				response.message = 'Không tìm thấy user!';
+				return res.send(response);
+			}
+			const arrMemberRemoved = task.assigness.filter((mem) => mem.id !== userId);
+
+			const removeUserFromTask = await TaskModel.updateOne({ taskId }, {
+				assigness: arrMemberRemoved
+			});
+
+			response.statusCode = 200;
+			response.message = 'Remove user from task successfully!';
+			console.log(`[PROJECT] >> [REMOVE USER TASK] response ${JSON.stringify(response)}`);
+			return res.send(response);
+		} catch (err) {
+			console.log(err);
+			console.log('[ERROR PROJECT] [REMOVE USER TASK] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	updateStatus: async (req, res) => {
+		const {
+			taskId,
+			statusId
+		} = req.body;
+
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log(
+				`[PROJECT] >> [UPDATE STATUS] payload ${JSON.stringify(req.body)}`
+			);
+			// LETS VALIDATE THE DATA
+			const { error } = updateStatusValidation(req.body);
+
+			if (error) {
+				console.log('[ERROR PROJECT] [UPDATE STATUS] ', JSON.stringify(error));
+				response.message = error.details[0].message;
+				return res.send(response);
+			}
+
+			const task = await TaskModel.findOne({ taskId });
+			if (!task) {
+				console.log('[ERROR PROJECT] [UPDATE STATUS] Không tìm thấy task!');
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const status = await StatusModel.findOne({ statusId });
+			if (!status) {
+				console.log('[ERROR PROJECT] [UPDATE STATUS] Không tìm thấy status!');
+				response.message = 'Không tìm thấy status!';
+				return res.send(response);
+			}
+
+			const updateTask = await TaskModel.findOneAndUpdate(
+				{ taskId },
+				{ statusId: _.toString(statusId) },
+				{ new: true }
+			);
+			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
+				console.log('[ERROR PROJECT] [UPDATE STATUS] Cập nhật task không thành công!');
+				return res.send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Update task successfully!';
+			console.log(
+				`[PROJECT] >> [UPDATE STATUS] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log(err);
+			console.log('[ERROR PROJECT] [UPDATE STATUS] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	updatePriority: async (req, res) => {
+		const {
+			taskId,
+			priorityId
+		} = req.body;
+
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log(
+				`[PROJECT] >> [UPDATE PRIORITY] payload ${JSON.stringify(req.body)}`
+			);
+			// LETS VALIDATE THE DATA
+			const { error } = updatePriorityValidation(req.body);
+
+			if (error) {
+				console.log('[ERROR PROJECT] [UPDATE PRIORITY] ', JSON.stringify(error));
+				response.message = error.details[0].message;
+				return res.send(response);
+			}
+
+			const task = await TaskModel.findOne({ taskId });
+			if (!task) {
+				console.log('[ERROR PROJECT] [UPDATE PRIORITY] Không tìm thấy task!');
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const userAction = {
+				id: _.toNumber(req.user.aud),
+				name: req.user.name
+			};
+
+			// check user thực hiện api đã được assign trong task chưa
+			const arrUserAssignTask = task.assigness.map((user) => user.id);
+			if (!_.includes(arrUserAssignTask, userAction.id)) {
+				console.log('[ERROR PROJECT] [UPDATE PRIORITY] User is not assign!');
+				response.message = 'User is not assign!';
+				return res.send(response);
+			}
+
+			const priority = await PriorityModel.findOne({ priorityId });
+			if (!priority) {
+				console.log('[ERROR PROJECT] [UPDATE PRIORITY] Không tìm thấy priority!');
+				response.message = 'Không tìm thấy priority!';
+				return res.send(response);
+			}
+
+			const updateTask = await TaskModel.findOneAndUpdate(
+				{ taskId },
+				{ priorityId },
+				{ new: true }
+			);
+			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
+				console.log('[ERROR PROJECT] [UPDATE PRIORITY] Cập nhật task không thành công!');
+				return res.send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Update task successfully!';
+			console.log(
+				`[PROJECT] >> [UPDATE PRIORITY] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log(err);
+			console.log('[ERROR PROJECT] [UPDATE PRIORITY] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	updateDescription: async (req, res) => {
+		const {
+			taskId,
+			description
+		} = req.body;
+
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log(
+				`[PROJECT] >> [UPDATE DESCRIPTION] payload ${JSON.stringify(req.body)}`
+			);
+			// LETS VALIDATE THE DATA
+			const { error } = updateDescriptionValidation(req.body);
+
+			if (error) {
+				console.log('[ERROR PROJECT] [UPDATE DESCRIPTION] ', JSON.stringify(error));
+				response.message = error.details[0].message;
+				return res.send(response);
+			}
+
+			const task = await TaskModel.findOne({ taskId });
+			if (!task) {
+				console.log('[ERROR PROJECT] [UPDATE DESCRIPTION] Không tìm thấy task!');
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const userAction = {
+				id: _.toNumber(req.user.aud),
+				name: req.user.name
+			};
+
+			// check user thực hiện api đã được assign trong task chưa
+			const arrUserAssignTask = task.assigness.map((user) => user.id);
+			if (!_.includes(arrUserAssignTask, userAction.id)) {
+				console.log('[ERROR PROJECT] [UPDATE DESCRIPTION] User is not assign!');
+				response.message = 'User is not assign!';
+				return res.send(response);
+			}
+
+			const updateTask = await TaskModel.findOneAndUpdate(
+				{ taskId },
+				{ description },
+				{ new: true }
+			);
+			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
+				console.log('[ERROR PROJECT] [UPDATE DESCRIPTION] Cập nhật task không thành công!');
+				return res.send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Update task successfully!';
+			console.log(
+				`[PROJECT] >> [UPDATE DESCRIPTION] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log(err);
+			console.log('[ERROR PROJECT] [UPDATE DESCRIPTION] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	updateTimeTracking: async (req, res) => {
+		const {
+			taskId,
+			timeTrackingSpent,
+			timeTrackingRemaining
+		} = req.body;
+
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log(
+				`[PROJECT] >> [UPDATE TIME TRACKING] payload ${JSON.stringify(req.body)}`
+			);
+			// LETS VALIDATE THE DATA
+			const { error } = updateTimeTrackingValidation(req.body);
+
+			if (error) {
+				console.log('[ERROR PROJECT] [UPDATE TIME TRACKING] ', JSON.stringify(error));
+				response.message = error.details[0].message;
+				return res.send(response);
+			}
+
+			const task = await TaskModel.findOne({ taskId });
+			if (!task) {
+				console.log('[ERROR PROJECT] [UPDATE TIME TRACKING] Không tìm thấy task!');
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const userAction = {
+				id: _.toNumber(req.user.aud),
+				name: req.user.name
+			};
+
+			// check user thực hiện api đã được assign trong task chưa
+			const arrUserAssignTask = task.assigness.map((user) => user.id);
+			if (!_.includes(arrUserAssignTask, userAction.id)) {
+				console.log('[ERROR PROJECT] [UPDATE TIME TRACKING] User is not assign!');
+				response.message = 'User is not assign!';
+				return res.send(response);
+			}
+
+			const updateTask = await TaskModel.findOneAndUpdate(
+				{ taskId },
+				{ timeTrackingSpent, timeTrackingRemaining },
+				{ new: true }
+			);
+			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
+				console.log('[ERROR PROJECT] [UPDATE TIME TRACKING] Cập nhật task không thành công!');
+				return res.send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Update task successfully!';
+			console.log(
+				`[PROJECT] >> [UPDATE TIME TRACKING] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log(err);
+			console.log('[ERROR PROJECT] [UPDATE TIME TRACKING] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	updateEstimate: async (req, res) => {
+		const {
+			taskId,
+			originalEstimate
+		} = req.body;
+
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log(
+				`[PROJECT] >> [UPDATE ESTIMATE] payload ${JSON.stringify(req.body)}`
+			);
+			// LETS VALIDATE THE DATA
+			const { error } = updateEstimateValidation(req.body);
+
+			if (error) {
+				console.log('[ERROR PROJECT] [UPDATE ESTIMATE] ', JSON.stringify(error));
+				response.message = error.details[0].message;
+				return res.send(response);
+			}
+
+			const task = await TaskModel.findOne({ taskId });
+			if (!task) {
+				console.log('[ERROR PROJECT] [UPDATE ESTIMATE] Không tìm thấy task!');
+				response.message = 'Không tìm thấy task!';
+				return res.send(response);
+			}
+
+			const userAction = {
+				id: _.toNumber(req.user.aud),
+				name: req.user.name
+			};
+
+			// check user thực hiện api đã được assign trong task chưa
+			const arrUserAssignTask = task.assigness.map((user) => user.id);
+			if (!_.includes(arrUserAssignTask, userAction.id)) {
+				console.log('[ERROR PROJECT] [UPDATE ESTIMATE] User is not assign!');
+				response.message = 'User is not assign!';
+				return res.send(response);
+			}
+
+			const updateTask = await TaskModel.findOneAndUpdate(
+				{ taskId },
+				{ originalEstimate },
+				{ new: true }
+			);
+			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
+				console.log('[ERROR PROJECT] [UPDATE ESTIMATE] Cập nhật task không thành công!');
+				return res.send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Update task successfully!';
+			console.log(
+				`[PROJECT] >> [UPDATE ESTIMATE] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log(err);
+			console.log('[ERROR PROJECT] [UPDATE ESTIMATE] ', JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
 };

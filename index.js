@@ -17,7 +17,7 @@ const projectCategory = require('./services/project/ProjectCategory.route');
 
 const status = require('./services/status/Status.route');
 const priority = require('./services/priority/Priority.route');
-const taskType = require('./services/taskType/TaskType.route')
+const taskType = require('./services/taskType/TaskType.route');
 
 // Middleware
 app.use(express.json());
@@ -31,5 +31,4 @@ app.use('/priority', priority);
 app.use('/status', status);
 app.use('/taskType', taskType);
 
-
-app.listen(PORT, () => console.log('Server up and running on PORT ' + PORT));
+app.listen(PORT, () => console.log(`Server up and running on PORT ${PORT}`));

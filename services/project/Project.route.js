@@ -12,6 +12,18 @@ router.post('/assignUserProject', verifyAccessToken, projectController.assignUse
 router.post('/removeUserFromProject', verifyAccessToken, projectController.removeUserFromProject);
 // router.post('/createProjectCategory', projectController.createProjectCategory);
 
+router.post('/assignUserTask', verifyAccessToken, projectController.assignUserTask);
+router.post('/removeUserFromTask', verifyAccessToken, projectController.removeUserFromTask);
+
 router.post('/createTask', verifyAccessToken, projectController.createTask);
+router.post('/updateTask', verifyAccessToken, projectController.updateTask);
+router.get('/getTaskDetail', verifyAccessToken, projectController.getTaskDetail);
+router.delete('/removeTask', verifyAccessToken, projectController.removeTask);
+
+router.put('/updateStatus', verifyAccessToken, projectController.updateStatus);
+router.put('/updatePriority', verifyAccessToken, projectController.updatePriority);
+router.put('/updateDescription', verifyAccessToken, projectController.updateDescription);
+router.put('/updateTimeTracking', verifyAccessToken, projectController.updateTimeTracking);
+router.put('/updateEstimate', verifyAccessToken, projectController.updateEstimate);
 
 module.exports = router;
