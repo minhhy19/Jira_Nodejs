@@ -1,13 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+
 dotenv.config();
-require('./helpers/init_mongodb')
+require('./helpers/init_mongodb');
 
 const app = express();
 
 const PORT = process.env.PORT || 5500;
-
 
 app.use(cors());
 // Import Routes
@@ -18,6 +18,7 @@ const projectCategory = require('./services/project/ProjectCategory.route');
 const status = require('./services/status/Status.route');
 const priority = require('./services/priority/Priority.route');
 const taskType = require('./services/taskType/TaskType.route');
+const comment = require('./services/comment/Comment.route');
 
 // Middleware
 app.use(express.json());
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use('/users', auth);
 app.use('/project', project);
 app.use('/projectCategory', projectCategory);
+app.use('/comment', comment);
 
 app.use('/priority', priority);
 app.use('/status', status);

@@ -3,7 +3,7 @@ const _ = require('lodash');
 const {
 	createValidation
 } = require('../validations/priority.validation');
-const { removeUnicode } = require('../helpers/removeUnicode')
+const { removeUnicode } = require('../helpers/removeUnicode');
 
 const PriorityModel = require('../models/Priority.model');
 

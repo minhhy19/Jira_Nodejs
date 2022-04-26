@@ -6,26 +6,20 @@ autoIncrement.initialize(mongoose);
 
 const Schema = mongoose.Schema(
 	{
-		members: [
-			{
-				type: Object,
-				default: null
-			}
-		],
-		creator: {
+		user: {
 			type: Object,
 			required: true
 		},
-		projectName: {
-			type: String,
+		userId: {
+			type: Number,
 			required: true
 		},
-		description: {
-			type: String,
-			default: ''
+		taskId: {
+			type: Number,
+			required: true
 		},
-		projectCategory: {
-			type: Object,
+		contentComment: {
+			type: String,
 			required: true
 		},
 		alias: {
@@ -38,13 +32,11 @@ const Schema = mongoose.Schema(
 		}
 	},
 	{
-		collection: 'Project',
+		collection: 'Comment',
 		versionKey: false,
 		timestamps: true
 	}
 );
-
-Schema.index({ projectName: 'text', alias: 'text' });
 
 /*
 | ==========================================================

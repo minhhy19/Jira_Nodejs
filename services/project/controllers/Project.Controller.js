@@ -23,6 +23,7 @@ const StatusModel = require('../../status/models/Status.model');
 const TaskTypeModel = require('../../taskType/models/TaskType.model');
 const PriorityModel = require('../../priority/models/Priority.model');
 const UserModel = require('../../user/models/User.model');
+const CommentModel = require('../../comment/models/Comment.model');
 
 module.exports = {
 	getAll: async (req, res) => {
@@ -877,6 +878,15 @@ module.exports = {
 				return res.send(response);
 			}
 
+			const getListCommentByTaskId = await CommentModel.find({ taskId });
+			const lstComment = getListCommentByTaskId.map((item) => ({
+				id: item.id,
+				idUser: item.userId,
+				name: item.user.name,
+				avatar: item.user.avatar,
+				commentContent: item.contentComment
+			}));
+
 			const taskDetail = await TaskModel.findOne({ taskId });
 			if (!taskDetail) {
 				console.log(
@@ -889,11 +899,11 @@ module.exports = {
 			response.statusCode = 200;
 			response.message = 'Lấy chi tiết task thành công!';
 			response.content = {
+				lstComment,
 				..._.pick(taskDetail, [
 					'priorityTask',
 					'taskTypeDetail',
 					'assigness',
-					'lstComment',
 					'taskId',
 					'taskName',
 					'alias',
@@ -955,6 +965,15 @@ module.exports = {
 			if (userAction.id !== project.creator.id) {
 				console.log('[ERROR PROJECT] [REMOVE TASK] Không đủ quyền truy cập!!');
 				response.message = 'Không đủ quyền truy cập!';
+				return res.send(response);
+			}
+
+			const conmentsDeleted = await CommentModel.deleteMany({ taskId });
+			if (!conmentsDeleted) {
+				console.log(
+					'[ERROR PROJECT] [REMOVE TASK] Xóa task thất bại, vui lòng thử lại'
+				);
+				response.message = 'Xóa task thất bại, vui lòng thử lại';
 				return res.send(response);
 			}
 
