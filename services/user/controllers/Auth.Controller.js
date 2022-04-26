@@ -11,6 +11,7 @@ const {
 } = require('../../../helpers/jwt_helpers');
 // var TokenModel = require('../models/Token.model');
 const UserModel = require('../models/User.model');
+const ProjectModel = require('../../project/models/Project.model');
 
 module.exports = {
 	signup: async (req, res) => {
@@ -261,6 +262,96 @@ module.exports = {
 			return res.send(response);
 		} catch (err) {
 			console.log(`[ERROR USER] [DELETE USER] `, JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	getUserByProjectId: async (req, res) => {
+		const idProject = _.get(req, 'query.idProject', null);
+		const response = {
+			statusCode: 400,
+			message: 'Xóa tài khoản thất bại',
+			content: null
+		};
+
+		try {
+			console.log(
+				`[USER] >> [DELETE USER] params ${JSON.stringify(req.query)}`
+			);
+
+			if (idProject === null) {
+				console.log(
+					'[ERROR USER] [GET USER BY PROJECTID] Không tìm thấy projectId'
+				);
+				response.statusCode = 404;
+				response.message = 'User not found in the project!';
+				return res.status(404).send(response);
+			}
+
+			const fetchUserByProjectId = await ProjectModel.findOne({ id: idProject });
+			if (!fetchUserByProjectId) {
+				console.log(
+					'[ERROR USER] [GET USER BY PROJECTID] Không tìm thấy projectId'
+				);
+				response.message = 'Không tìm thấy projectId';
+				return res.status(404).send(response);
+			}
+
+			if (fetchUserByProjectId.members.length < 1) {
+				console.log(
+					'[ERROR USER] [GET USER BY PROJECTID] User not found in the project!'
+				);
+				response.message = 'User not found in the project!';
+				return res.status(404).send(response);
+			}
+
+			response.statusCode = 200;
+			response.message = 'Xử lý thành công';
+			response.content = fetchUserByProjectId.members;
+			console.log(
+				`[USER] >> [GET USER BY PROJECTID] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log(`[ERROR USER] [GET USER BY PROJECTID] `, JSON.stringify(err));
+			response.statusCode = 500;
+			response.message = 'Internal Server Error';
+			return res.send(response);
+		}
+	},
+
+	getUser: async (req, res) => {
+		const query = {
+			...(req.query.keyword && { $text: { $search: req.query.keyword } })
+		};
+		const response = {
+			statusCode: 400,
+			message: 'Xử lý thất bại',
+			content: null
+		};
+		try {
+			console.log('[USER] >> [GET USER]');
+
+			let userAll = await UserModel.find(query);
+			userAll = userAll.map((user) => ({
+				userId: user.userId,
+				name: user.name,
+				avatar: user.avatar,
+				email: user.email,
+				phoneNumber: user.phoneNumber
+			}));
+
+			response.statusCode = 200;
+			response.message = 'Lấy danh sách user thành công!';
+			response.content = userAll;
+			console.log(
+				`[USER] >> [GET USER] response ${JSON.stringify(response)}`
+			);
+			return res.send(response);
+		} catch (err) {
+			console.log('[ERROR USER] [GET USER] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
