@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
-const bcrypt = require('bcrypt');
 
 autoIncrement.initialize(mongoose);
 

@@ -1,7 +1,6 @@
 // VALIDATION
 const _ = require('lodash');
 const Joi = require('joi');
-const GeneralConstant = require('../constants/general.constant');
 
 // Create Validation
 const createValidation = (data) => {
@@ -44,7 +43,7 @@ const createTaskValidation = (data) => {
 		timeTrackingRemaining: Joi.number().required(),
 		projectId: Joi.number().required(),
 		typeId: Joi.number().required(),
-		priorityId: Joi.number().required(),
+		priorityId: Joi.number().required()
 	});
 	return schema.validate(data);
 };
@@ -62,7 +61,7 @@ const updateTaskValidation = (data) => {
 		timeTrackingRemaining: Joi.number().required(),
 		projectId: Joi.number().required(),
 		typeId: Joi.number().required(),
-		priorityId: Joi.number().required(),
+		priorityId: Joi.number().required()
 	});
 	return schema.validate(data);
 };

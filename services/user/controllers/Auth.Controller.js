@@ -261,7 +261,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log(`[ERROR USER] [DELETE USER] `, JSON.stringify(err));
+			console.log('[ERROR USER] [DELETE USER] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -315,7 +315,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log(`[ERROR USER] [GET USER BY PROJECTID] `, JSON.stringify(err));
+			console.log('[ERROR USER] [GET USER BY PROJECTID] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -356,7 +356,7 @@ module.exports = {
 			response.message = 'Internal Server Error';
 			return res.send(response);
 		}
-	},
+	}
 
 	// refreshToken: async (req, res) => {
 	// 	try {

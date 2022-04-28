@@ -1,6 +1,6 @@
-var router = require('express').Router();
-var projectCategoryController = require('./controllers/ProjectCategory.Controller');
-var { verifyAccessToken } = require('../../helpers/jwt_helpers');
+const router = require('express').Router();
+const projectCategoryController = require('./controllers/ProjectCategory.Controller');
+const { verifyAccessToken } = require('../../helpers/jwt_helpers');
 
 router.get('/', projectCategoryController.getAllCategory);
 // router.post('/createProjectCategory', projectCategoryController.createProjectCategory);

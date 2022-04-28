@@ -17,7 +17,7 @@ module.exports = {
 			console.log('[PROJECT CATEGORY] >> [GET ALL] payload');
 
 			let projectCategoryAll = await ProjectCategoryModel.find();
-			projectCategoryAll = projectCategoryAll.map((category, index) => ({
+			projectCategoryAll = projectCategoryAll.map((category) => ({
 				id: category.id,
 				projectCategoryName: category.projectCategoryName
 			}));

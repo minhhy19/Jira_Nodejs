@@ -13,13 +13,13 @@ const Schema = mongoose.Schema(
 			type: Object,
 			required: true
 		},
-        assigness: [
+		assigness: [
 			{
 				type: Object,
 				default: null
 			}
 		],
-        lstComment: [
+		lstComment: [
 			{
 				type: Object,
 				default: null
@@ -37,27 +37,27 @@ const Schema = mongoose.Schema(
 			type: String,
 			required: true
 		},
-        originalEstimate: {
+		originalEstimate: {
 			type: Number,
 			required: true
 		},
-        timeTrackingSpent: {
+		timeTrackingSpent: {
 			type: Number,
 			required: true
 		},
-        timeTrackingRemaining: {
+		timeTrackingRemaining: {
 			type: Number,
 			required: true
 		},
-        typeId: {
+		typeId: {
 			type: Number,
 			required: true
 		},
-        priorityId: {
+		priorityId: {
 			type: Number,
 			required: true
 		},
-        projectId: {
+		projectId: {
 			type: Number,
 			required: true
 		},

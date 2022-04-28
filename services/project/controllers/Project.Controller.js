@@ -1494,5 +1494,5 @@ module.exports = {
 			response.message = 'Internal Server Error';
 			return res.send(response);
 		}
-	},
+	}
 };
