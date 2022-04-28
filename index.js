@@ -20,6 +20,8 @@ const priority = require('./services/priority/Priority.route');
 const taskType = require('./services/taskType/TaskType.route');
 const comment = require('./services/comment/Comment.route');
 
+const ping = require('./services/ping/Ping.route');
+
 // Middleware
 app.use(express.json());
 
@@ -32,5 +34,7 @@ app.use('/comment', comment);
 app.use('/priority', priority);
 app.use('/status', status);
 app.use('/taskType', taskType);
+
+app.use('/ping', ping);
 
 app.listen(PORT, () => console.log(`Server up and running on PORT ${PORT}`));
