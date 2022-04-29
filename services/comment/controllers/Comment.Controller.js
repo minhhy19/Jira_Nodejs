@@ -55,7 +55,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo(`[ERROR COMMENT] [GET ALL] `, JSON.stringify(err));
+			logInfo(`[ERROR COMMENT] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -77,10 +77,7 @@ module.exports = {
 			const { error } = insertCommentValidation(req.body);
 
 			if (error) {
-				logInfo(
-					'[ERROR COMMENT] [CREATE] ',
-					JSON.stringify(error)
-				);
+				logInfo(`[ERROR COMMENT] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -148,7 +145,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR COMMENT] [CREATE] ', JSON.stringify(err));
+			logInfo(`[ERROR COMMENT] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -173,10 +170,7 @@ module.exports = {
 			const { error } = updateCommentValidation(param);
 
 			if (error) {
-				logInfo(
-					'[ERROR COMMENT] [UPDATE] ',
-					JSON.stringify(error)
-				);
+				logInfo(`[ERROR COMMENT] [UPDATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -239,7 +233,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR COMMENT] [UPDATE] ', JSON.stringify(err));
+			logInfo(`[ERROR COMMENT] [UPDATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -303,7 +297,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR COMMENT] [UPDATE] ', JSON.stringify(err));
+			logInfo(`[ERROR COMMENT] [UPDATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);

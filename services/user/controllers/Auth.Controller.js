@@ -40,7 +40,7 @@ module.exports = {
 			const { error } = registerValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR USER] [SIGNUP] ', JSON.stringify(error));
+				logInfo(`[ERROR USER] [SIGNUP] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -72,7 +72,7 @@ module.exports = {
 			logInfo(`[USER] >> [SIGNUP] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR USER] [SIGNUP] ', JSON.stringify(err));
+			logInfo(`[ERROR USER] [SIGNUP] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -95,7 +95,7 @@ module.exports = {
 			const { error } = loginValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR USER] [SIGNUP] ', JSON.stringify(error));
+				logInfo(`[ERROR USER] [SIGNUP] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -143,7 +143,7 @@ module.exports = {
 			logInfo(`[USER] >> [SIGN IN] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (error) {
-			logInfo('[ERROR USER] [SIGN IN] ', JSON.stringify(error));
+			logInfo(`[ERROR USER] [SIGN IN] ${JSON.stringify(error)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -166,7 +166,7 @@ module.exports = {
 			const { error } = editUserValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR USER] [EDIT USER] ', JSON.stringify(error));
+				logInfo(`[ERROR USER] [EDIT USER] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -220,7 +220,7 @@ module.exports = {
 			logInfo(`[USER] >> [EDIT USER] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR USER] [EDIT USER] ', JSON.stringify(err));
+			logInfo(`[ERROR USER] [EDIT USER] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -265,7 +265,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR USER] [DELETE USER] ', JSON.stringify(err));
+			logInfo(`[ERROR USER] [DELETE USER] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -319,7 +319,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR USER] [GET USER BY PROJECTID] ', JSON.stringify(err));
+			logInfo(`[ERROR USER] [GET USER BY PROJECTID] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -355,7 +355,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR USER] [GET USER] ', JSON.stringify(err));
+			logInfo(`[ERROR USER] [GET USER] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);

@@ -34,7 +34,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR TASKTYPE] [GET ALL] ', JSON.stringify(err));
+			logInfo(`[ERROR TASKTYPE] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -54,7 +54,7 @@ module.exports = {
 			const { error } = createValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR TASKTYPE] [CREATE] ', JSON.stringify(error));
+				logInfo(`[ERROR TASKTYPE] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -78,7 +78,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR TASKTYPE] [CREATE] ', JSON.stringify(err));
+			logInfo(`[ERROR TASKTYPE] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);

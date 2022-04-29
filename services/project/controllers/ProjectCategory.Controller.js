@@ -36,7 +36,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT CATEGORY] [GET ALL] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT CATEGORY] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -58,10 +58,7 @@ module.exports = {
 			const { error } = createProjectCategoryValidation(req.body);
 
 			if (error) {
-				logInfo(
-					'[ERROR PROJECT CATEGORY] [CREATE] ',
-					JSON.stringify(error)
-				);
+				logInfo(`[ERROR PROJECT CATEGORY] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -88,7 +85,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT CATEGORY] [CREATE] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT CATEGORY] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);

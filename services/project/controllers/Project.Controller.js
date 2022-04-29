@@ -65,7 +65,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [GET ALL] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -158,7 +158,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [GET PROJECT DETAIL] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [GET PROJECT DETAIL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -178,7 +178,7 @@ module.exports = {
 			const { error } = createValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR PROJECT] [CREATE] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -237,7 +237,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [CREATE] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [CREATE] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -265,7 +265,7 @@ module.exports = {
 			// LETS VALIDATE THE DATA
 			const { error } = editValidation(req.body);
 			if (error) {
-				logInfo('[ERROR PROJECT] [EDIT] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [EDIT] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -349,7 +349,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [EDIT] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [EDIT] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [EDIT] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -409,7 +409,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [DELETE] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [DELETE] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [DELETE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -430,7 +430,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [ASSIGN USER PROJECT] payload ${JSON.stringify(req.body)}`);
 			const { error } = assignUserProjectValidation(req.body);
 			if (error) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [ASSIGN USER PROJECT] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -482,7 +482,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [ASSIGN USER PROJECT] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [ASSIGN USER PROJECT] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -503,7 +503,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [REMOVE USER PROJECT] payload ${JSON.stringify(req.body)}`);
 			const { error } = assignUserProjectValidation(req.body);
 			if (error) {
-				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [REMOVE USER PROJECT] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -545,7 +545,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [REMOVE USER PROJECT] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [REMOVE USER PROJECT] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -579,7 +579,7 @@ module.exports = {
 			const { error } = createTaskValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR PROJECT] [CREATE TASK] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [CREATE TASK] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -690,7 +690,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [CREATE TASK] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [CREATE TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -725,7 +725,7 @@ module.exports = {
 			const { error } = updateTaskValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR PROJECT] [UPDATE TASK] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [UPDATE TASK] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -850,7 +850,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [UPDATE TASK] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [UPDATE TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -919,7 +919,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [GET TASK DETAIL] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [GET TASK DETAIL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -990,7 +990,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [REMOVE TASK] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [REMOVE TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -1011,7 +1011,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [ASSIGN USER TASK] payload ${JSON.stringify(req.body)}`);
 			const { error } = assignUserTaskValidation(req.body);
 			if (error) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [ASSIGN USER TASK] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -1074,7 +1074,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [ASSIGN USER TASK] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [ASSIGN USER TASK] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [ASSIGN USER TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -1095,7 +1095,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [REMOVE USER TASK] payload ${JSON.stringify(req.body)}`);
 			const { error } = removeUserTaskValidation(req.body);
 			if (error) {
-				logInfo('[ERROR PROJECT] [REMOVE USER TASK] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [REMOVE USER TASK] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -1137,7 +1137,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [REMOVE USER TASK] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [REMOVE USER TASK] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [REMOVE USER TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -1163,7 +1163,7 @@ module.exports = {
 			const { error } = updateStatusValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR PROJECT] [UPDATE STATUS] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [UPDATE STATUS] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -1199,7 +1199,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [UPDATE STATUS] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [UPDATE STATUS] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -1225,7 +1225,7 @@ module.exports = {
 			const { error } = updatePriorityValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [UPDATE PRIORITY] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -1274,7 +1274,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [UPDATE PRIORITY] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [UPDATE PRIORITY] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -1300,7 +1300,7 @@ module.exports = {
 			const { error } = updateDescriptionValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR PROJECT] [UPDATE DESCRIPTION] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [UPDATE DESCRIPTION] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -1342,7 +1342,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [UPDATE DESCRIPTION] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [UPDATE DESCRIPTION] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -1369,7 +1369,7 @@ module.exports = {
 			const { error } = updateTimeTrackingValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR PROJECT] [UPDATE TIME TRACKING] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [UPDATE TIME TRACKING] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -1411,7 +1411,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [UPDATE TIME TRACKING] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [UPDATE TIME TRACKING] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -1437,7 +1437,7 @@ module.exports = {
 			const { error } = updateEstimateValidation(req.body);
 
 			if (error) {
-				logInfo('[ERROR PROJECT] [UPDATE ESTIMATE] ', JSON.stringify(error));
+				logInfo(`[ERROR PROJECT] [UPDATE ESTIMATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -1479,7 +1479,7 @@ module.exports = {
 			);
 			return res.send(response);
 		} catch (err) {
-			logInfo('[ERROR PROJECT] [UPDATE ESTIMATE] ', JSON.stringify(err));
+			logInfo(`[ERROR PROJECT] [UPDATE ESTIMATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
