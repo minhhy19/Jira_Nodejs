@@ -1,5 +1,6 @@
 // var UserModel = require('../models/User.model.js');
 const _ = require('lodash');
+const logger = require('../../../loggerService');
 const {
 	insertCommentValidation, updateCommentValidation
 } = require('../validations/comment.validation');
@@ -8,6 +9,11 @@ const { removeUnicode } = require('../helpers/removeUnicode');
 const CommentModel = require('../models/Comment.model');
 const TaskModel = require('../../project/models/Task.model');
 const UserModel = require('../../user/models/User.model');
+
+function logInfo(str) {
+	console.log(str);
+	logger.info(str);
+}
 
 module.exports = {
 	getAll: async (req, res) => {
@@ -18,10 +24,10 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log('[COMMENT] >> [GET ALL] payload');
+			logInfo('[COMMENT] >> [GET ALL]');
 
 			if (taskId === null) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [GET ALL] Không tìm thấy task!'
 				);
 				response.statusCode = 200;
@@ -44,12 +50,12 @@ module.exports = {
 			response.statusCode = 200;
 			response.message = 'Lấy danh sách comment thành công!';
 			response.content = commentAll;
-			console.log(
+			logInfo(
 				`[COMMENT] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log(`[ERROR COMMENT] [GET ALL] `, JSON.stringify(err));
+			logInfo(`[ERROR COMMENT] [GET ALL] `, JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -64,14 +70,14 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log(
+			logInfo(
 				`[COMMENT] >> [CREATE] payload ${JSON.stringify(req.body)}`
 			);
 			// LETS VALIDATE THE DATA
 			const { error } = insertCommentValidation(req.body);
 
 			if (error) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [CREATE] ',
 					JSON.stringify(error)
 				);
@@ -85,7 +91,7 @@ module.exports = {
 
 			const user = await UserModel.findOne({ userId: userAction.id });
 			if (!user) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [CREATE] Không tìm thấy user!'
 				);
 				response.message = 'Không tìm thấy user!';
@@ -94,7 +100,7 @@ module.exports = {
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [CREATE] Không tìm thấy task!'
 				);
 				response.message = 'Không tìm thấy task!';
@@ -111,7 +117,7 @@ module.exports = {
 
 			const saveComment = await CommentModel.create(commentData);
 			if (_.get(saveComment, 'id', false) === false) {
-				console.log('[ERROR COMMENT] [CREATE] Tạo comment không thành công!');
+				logInfo('[ERROR COMMENT] [CREATE] Tạo comment không thành công!');
 				return res.send(response);
 			}
 
@@ -130,19 +136,19 @@ module.exports = {
 			// 	}
 			// );
 			// if (!updatedTask) {
-			// 	console.log('[ERROR COMMENT] [CREATE] Cập nhật task không thành công!');
+			// 	logInfo('[ERROR COMMENT] [CREATE] Cập nhật task không thành công!');
 			// 	return res.send(response);
 			// }
 
 			response.statusCode = 200;
 			response.message = 'Tạo thành công!';
 			response.content = _.pick(saveComment, ['id', 'userId', 'taskId', 'contentComment', 'deleted', 'alias']);
-			console.log(
+			logInfo(
 				`[COMMENT] >> [CREATE] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR COMMENT] [CREATE] ', JSON.stringify(err));
+			logInfo('[ERROR COMMENT] [CREATE] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -160,14 +166,14 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log(
+			logInfo(
 				`[COMMENT] >> [UPDATE] payload ${JSON.stringify(param)}`
 			);
 			// LETS VALIDATE THE DATA
 			const { error } = updateCommentValidation(param);
 
 			if (error) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [UPDATE] ',
 					JSON.stringify(error)
 				);
@@ -177,7 +183,7 @@ module.exports = {
 
 			const comment = await CommentModel.findOne({ id: param.id });
 			if (!comment) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [UPDATE] Không tìm thấy comment!'
 				);
 				response.message = 'Không tìm thấy comment!';
@@ -189,7 +195,7 @@ module.exports = {
 			};
 
 			if (userAction.id !== comment.userId) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [UPDATE] 403 Forbidden !'
 				);
 				response.statusCode = 403;
@@ -199,7 +205,7 @@ module.exports = {
 
 			const user = await UserModel.findOne({ userId: userAction.id });
 			if (!user) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [UPDATE] Không tìm thấy user!'
 				);
 				response.message = 'Không tìm thấy user!';
@@ -218,7 +224,7 @@ module.exports = {
 				{ new: true }
 			);
 			if (!_.isObject(updateComment) || !_.get(updateComment, 'id', false)) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [UPDATE] Cập nhật comment không thành công!'
 				);
 				response.message = 'Cập nhật comment không thành công!';
@@ -228,12 +234,12 @@ module.exports = {
 			response.statusCode = 200;
 			response.message = 'Cập nhật comment thành công!';
 			response.content = _.pick(updateComment, ['id', 'userId', 'taskId', 'contentComment', 'deleted', 'alias']);
-			console.log(
+			logInfo(
 				`[COMMENT] >> [UPDATE] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR COMMENT] [UPDATE] ', JSON.stringify(err));
+			logInfo('[ERROR COMMENT] [UPDATE] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -248,11 +254,11 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log('[COMMENT] >> [DELETE]');
+			logInfo('[COMMENT] >> [DELETE]');
 
 			const comment = await CommentModel.findOne({ id });
 			if (!comment) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [DELETE] Không tìm thấy comment!'
 				);
 				response.message = 'Không tìm thấy comment!';
@@ -264,7 +270,7 @@ module.exports = {
 			};
 
 			if (userAction.id !== comment.userId) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [DELETE] 403 Forbidden !'
 				);
 				response.statusCode = 403;
@@ -274,7 +280,7 @@ module.exports = {
 
 			const user = await UserModel.findOne({ userId: userAction.id });
 			if (!user) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [DELETE] Không tìm thấy user!'
 				);
 				response.message = 'Không tìm thấy user!';
@@ -283,7 +289,7 @@ module.exports = {
 
 			const commentDeleted = await CommentModel.deleteOne({ id });
 			if (!commentDeleted || commentDeleted.deletedCount < 1) {
-				console.log(
+				logInfo(
 					'[ERROR COMMENT] [DELETE] Xóa comment thất bại, vui lòng thử lại'
 				);
 				response.message = 'Xóa comment thất bại, vui lòng thử lại';
@@ -292,12 +298,12 @@ module.exports = {
 
 			response.statusCode = 200;
 			response.message = 'Deleted comment success';
-			console.log(
+			logInfo(
 				`[COMMENT] >> [UPDATE] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR COMMENT] [UPDATE] ', JSON.stringify(err));
+			logInfo('[ERROR COMMENT] [UPDATE] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);

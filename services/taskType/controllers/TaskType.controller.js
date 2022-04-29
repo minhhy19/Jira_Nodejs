@@ -1,8 +1,14 @@
 // var UserModel = require('../models/User.model.js');
 const _ = require('lodash');
+const logger = require('../../../loggerService');
 const { createValidation } = require('../validations/taskType.validation');
 
 const TaskTypeModel = require('../models/TaskType.model');
+
+function logInfo(str) {
+	console.log(str);
+	logger.info(str);
+}
 
 module.exports = {
 	getAll: async (req, res) => {
@@ -12,7 +18,7 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log('[TASKTYPE] >> [GET ALL] payload');
+			logInfo('[TASKTYPE] >> [GET ALL]');
 
 			let taskTypeAll = await TaskTypeModel.find();
 			taskTypeAll = taskTypeAll.map((item) => ({
@@ -23,12 +29,12 @@ module.exports = {
 			response.statusCode = 200;
 			response.message = 'Lấy danh sách task type thành công!';
 			response.content = taskTypeAll;
-			console.log(
+			logInfo(
 				`[TASKTYPE] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR TASKTYPE] [GET ALL] ', JSON.stringify(err));
+			logInfo('[ERROR TASKTYPE] [GET ALL] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -43,12 +49,12 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log(`[TASKTYPE] >> [CREATE] payload ${JSON.stringify(req.body)}`);
+			logInfo(`[TASKTYPE] >> [CREATE] payload ${JSON.stringify(req.body)}`);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
 			const { error } = createValidation(req.body);
 
 			if (error) {
-				console.log('[ERROR TASKTYPE] [CREATE] ', JSON.stringify(error));
+				logInfo('[ERROR TASKTYPE] [CREATE] ', JSON.stringify(error));
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -57,7 +63,7 @@ module.exports = {
 				taskType
 			});
 			if (taskTypeExist) {
-				console.log('[ERROR TASKTYPE] [CREATE] Task type đã được sử dụng!');
+				logInfo('[ERROR TASKTYPE] [CREATE] Task type đã được sử dụng!');
 				response.message = 'Task type đã được sử dụng!';
 				return res.send(response);
 			}
@@ -67,12 +73,12 @@ module.exports = {
 			});
 			response.statusCode = 200;
 			response.message = 'Tạo thành công!';
-			console.log(
+			logInfo(
 				`[TASKTYPE] >> [CREATE] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR TASKTYPE] [CREATE] ', JSON.stringify(err));
+			logInfo('[ERROR TASKTYPE] [CREATE] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);

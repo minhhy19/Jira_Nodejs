@@ -2,14 +2,24 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
+const expressPinoLogger = require('express-pino-logger');
+
 dotenv.config();
 require('./helpers/init_mongodb');
 
 const app = express();
+const logger = require('./loggerService');
+
+const loggerMidlleware = expressPinoLogger({
+	logger,
+	autoLogging: true
+});
+app.use(loggerMidlleware);
 
 const PORT = process.env.PORT || 5500;
 
 app.use(cors());
+
 // Import Routes
 const auth = require('./services/user/Auth.route');
 const project = require('./services/project/Project.route');

@@ -1,11 +1,17 @@
 // var UserModel = require('../models/User.model.js');
 const _ = require('lodash');
+const logger = require('../../../loggerService');
 const {
 	createValidation
 } = require('../validations/priority.validation');
 const { removeUnicode } = require('../helpers/removeUnicode');
 
 const PriorityModel = require('../models/Priority.model');
+
+function logInfo(str) {
+	console.log(str);
+	logger.info(str);
+}
 
 module.exports = {
 	getAll: async (req, res) => {
@@ -15,7 +21,7 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log('[PRIORITY] >> [GET ALL] payload');
+			logInfo('[PRIORITY] >> [GET ALL]');
 
 			let priorityAll = await PriorityModel.find();
 			priorityAll = priorityAll.map((item) => ({
@@ -25,17 +31,16 @@ module.exports = {
 				deleted: item.deleted,
 				alias: item.alias
 			}));
-			console.log('priorityAll', priorityAll);
 
 			response.statusCode = 200;
 			response.message = 'Lấy danh sách priority thành công!';
 			response.content = priorityAll;
-			console.log(
+			logInfo(
 				`[PRIORITY] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR PRIORITY] [GET ALL] ', JSON.stringify(err));
+			logInfo('[ERROR PRIORITY] [GET ALL] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -50,14 +55,14 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log(
+			logInfo(
 				`[PRIORITY] >> [CREATE] payload ${JSON.stringify(req.body)}`
 			);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
 			const { error } = createValidation(req.body);
 
 			if (error) {
-				console.log(
+				logInfo(
 					'[ERROR PRIORITY] [CREATE] ',
 					JSON.stringify(error)
 				);
@@ -70,7 +75,7 @@ module.exports = {
 				priority
 			});
 			if (priorityExist) {
-				console.log(
+				logInfo(
 					'[ERROR PRIORITY] [CREATE] Priority đã được sử dụng!'
 				);
 				response.message = 'Priority đã được sử dụng!';
@@ -84,12 +89,12 @@ module.exports = {
 			});
 			response.statusCode = 200;
 			response.message = 'Tạo thành công!';
-			console.log(
+			logInfo(
 				`[PRIORITY] >> [CREATE] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR PRIORITY] [CREATE] ', JSON.stringify(err));
+			logInfo('[ERROR PRIORITY] [CREATE] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);

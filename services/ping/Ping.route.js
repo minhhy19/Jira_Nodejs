@@ -1,8 +1,6 @@
 const router = require('express').Router();
+const logger = require('../../loggerService');
 
-router.get('/', async (req, res) => {
-	console.log('ping every 10 minute');
-	return res.send('ping every 10 minute');
-});
+router.get('/', async (req, res) => res.send('ping every 10 minute'));
 
 module.exports = router;

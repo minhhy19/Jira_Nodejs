@@ -1,6 +1,7 @@
 // var UserModel = require('../models/User.model.js');
 const _ = require('lodash');
 const CryptoJS = require('crypto-js');
+const logger = require('../../../loggerService');
 const {
 	registerValidation,
 	loginValidation,
@@ -12,6 +13,11 @@ const {
 // var TokenModel = require('../models/Token.model');
 const UserModel = require('../models/User.model');
 const ProjectModel = require('../../project/models/Project.model');
+
+function logInfo(str) {
+	console.log(str);
+	logger.info(str);
+}
 
 module.exports = {
 	signup: async (req, res) => {
@@ -29,12 +35,12 @@ module.exports = {
 			}
 		};
 		try {
-			console.log(`[USER] >> [SIGNUP] payload ${JSON.stringify(req.body)}`);
+			logInfo(`[USER] >> [SIGNUP] payload ${JSON.stringify(req.body)}`);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
 			const { error } = registerValidation(req.body);
 
 			if (error) {
-				console.log('[ERROR USER] [SIGNUP] ', JSON.stringify(error));
+				logInfo('[ERROR USER] [SIGNUP] ', JSON.stringify(error));
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -42,7 +48,7 @@ module.exports = {
 			// Checking if the user is already in the database
 			const emailExist = await UserModel.findOne({ email });
 			if (emailExist) {
-				console.log('[ERROR USER] [SIGNUP] Email đã được sử dụng!');
+				logInfo('[ERROR USER] [SIGNUP] Email đã được sử dụng!');
 				response.message = 'Email đã được sử dụng!';
 				return res.send(response);
 			}
@@ -63,10 +69,10 @@ module.exports = {
 			const saveUser = await UserModel.create(user);
 			response.statusCode = 200;
 			response.message = 'Đăng ký tài khoản thành công!';
-			console.log(`[USER] >> [SIGNUP] response ${JSON.stringify(response)}`);
+			logInfo(`[USER] >> [SIGNUP] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR USER] [SIGNUP] ', JSON.stringify(err));
+			logInfo('[ERROR USER] [SIGNUP] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -84,12 +90,12 @@ module.exports = {
 			}
 		};
 		try {
-			console.log(`[USER] >> [SIGN IN] payload ${JSON.stringify(req.body)}`);
+			logInfo(`[USER] >> [SIGN IN] payload ${JSON.stringify(req.body)}`);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
 			const { error } = loginValidation(req.body);
 
 			if (error) {
-				console.log('[ERROR USER] [SIGNUP] ', JSON.stringify(error));
+				logInfo('[ERROR USER] [SIGNUP] ', JSON.stringify(error));
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -97,7 +103,7 @@ module.exports = {
 			// Checking if the email exist
 			const user = await UserModel.findOne({ email });
 			if (!user) {
-				console.log('[ERROR USER] [SIGN IN] Email is wrong!');
+				logInfo('[ERROR USER] [SIGN IN] Email is wrong!');
 				response.message = 'Email is wrong!';
 				return res.send(response);
 			}
@@ -107,7 +113,7 @@ module.exports = {
 				passWord + process.env.HASH_PASS_USER
 			).toString(CryptoJS.enc.Hex);
 			if (hashedPassword !== user.passWord) {
-				console.log('[ERROR USER] [SIGN IN] Invalid password');
+				logInfo('[ERROR USER] [SIGN IN] Invalid password');
 				response.message = 'Invalid password';
 				return res.send(response);
 			}
@@ -134,10 +140,10 @@ module.exports = {
 					accessToken
 				}
 			};
-			console.log(`[USER] >> [SIGN IN] response ${JSON.stringify(response)}`);
+			logInfo(`[USER] >> [SIGN IN] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (error) {
-			console.log('[ERROR USER] [SIGN IN] ', JSON.stringify(error));
+			logInfo('[ERROR USER] [SIGN IN] ', JSON.stringify(error));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -155,12 +161,12 @@ module.exports = {
 		};
 
 		try {
-			console.log(`[USER] >> [EDIT USER] payload ${JSON.stringify(req.body)}`);
+			logInfo(`[USER] >> [EDIT USER] payload ${JSON.stringify(req.body)}`);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
 			const { error } = editUserValidation(req.body);
 
 			if (error) {
-				console.log('[ERROR USER] [EDIT USER] ', JSON.stringify(error));
+				logInfo('[ERROR USER] [EDIT USER] ', JSON.stringify(error));
 				response.message = error.details[0].message;
 				return res.send(response);
 			}
@@ -168,7 +174,7 @@ module.exports = {
 			// Kiểm tra user trong db
 			const userExist = await UserModel.findOne({ userId: id });
 			if (!userExist) {
-				console.log(
+				logInfo(
 					'[ERROR USER] [EDIT USER] Không tìm thấy thông tin tài khoản'
 				);
 				response.message = 'Không tìm thấy thông tin tài khoản';
@@ -183,7 +189,7 @@ module.exports = {
 				}
 			});
 			if (emailExist) {
-				console.log('[ERROR USER] [EDIT USER] Email đã được sử dụng!');
+				logInfo('[ERROR USER] [EDIT USER] Email đã được sử dụng!');
 				response.message = 'Email đã được sử dụng!';
 				return res.send(response);
 			}
@@ -192,8 +198,6 @@ module.exports = {
 			const hashedPassword = await CryptoJS.SHA256(
 				passWord + process.env.HASH_PASS_USER
 			).toString(CryptoJS.enc.Hex);
-
-			console.log(hashedPassword);
 
 			const updated = await UserModel.updateOne(
 				{ userId: userExist.userId },
@@ -206,17 +210,17 @@ module.exports = {
 			);
 
 			if (!updated) {
-				console.log('[ERROR USER] [EDIT USER] Cập nhật thông tin tài khoản thất bại, vui lòng thử lại');
+				logInfo('[ERROR USER] [EDIT USER] Cập nhật thông tin tài khoản thất bại, vui lòng thử lại');
 				response.message = 'Cập nhật thông tin tài khoản thất bại, vui lòng thử lại';
 				return res.send(response);
 			}
 
 			response.statusCode = 200;
 			response.message = 'Cập nhật thông tin tài khoản thành công';
-			console.log(`[USER] >> [EDIT USER] response ${JSON.stringify(response)}`);
+			logInfo(`[USER] >> [EDIT USER] response ${JSON.stringify(response)}`);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR USER] [EDIT USER] ', JSON.stringify(err));
+			logInfo('[ERROR USER] [EDIT USER] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -232,13 +236,13 @@ module.exports = {
 		};
 
 		try {
-			console.log(
+			logInfo(
 				`[USER] >> [DELETE USER] params ${JSON.stringify(req.query)}`
 			);
 
 			// Nếu tài khoản xóa khác với tài khoản đã đăng nhập thì trả lỗi 401
 			if (id !== req.user.aud) {
-				console.log(
+				logInfo(
 					'[ERROR USER] [DELETE USER] Tài khoản khác với tài khoản đã đăng nhập'
 				);
 				return res.status(401).send('Access Denied');
@@ -247,7 +251,7 @@ module.exports = {
 			const deleted = await UserModel.deleteOne({ userId: id });
 
 			if (!deleted || deleted.deletedCount < 1) {
-				console.log(
+				logInfo(
 					'[ERROR USER] [DELETE USER] Xóa tài khoản thất bại, vui lòng thử lại'
 				);
 				response.message = 'Xóa tài khoản thất bại, vui lòng thử lại';
@@ -256,12 +260,12 @@ module.exports = {
 
 			response.statusCode = 200;
 			response.message = 'Xóa tài khoản thành công';
-			console.log(
+			logInfo(
 				`[USER] >> [DELETE USER] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR USER] [DELETE USER] ', JSON.stringify(err));
+			logInfo('[ERROR USER] [DELETE USER] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -277,12 +281,12 @@ module.exports = {
 		};
 
 		try {
-			console.log(
+			logInfo(
 				`[USER] >> [DELETE USER] params ${JSON.stringify(req.query)}`
 			);
 
 			if (idProject === null) {
-				console.log(
+				logInfo(
 					'[ERROR USER] [GET USER BY PROJECTID] Không tìm thấy projectId'
 				);
 				response.statusCode = 404;
@@ -292,7 +296,7 @@ module.exports = {
 
 			const fetchUserByProjectId = await ProjectModel.findOne({ id: idProject });
 			if (!fetchUserByProjectId) {
-				console.log(
+				logInfo(
 					'[ERROR USER] [GET USER BY PROJECTID] Không tìm thấy projectId'
 				);
 				response.message = 'Không tìm thấy projectId';
@@ -300,7 +304,7 @@ module.exports = {
 			}
 
 			if (fetchUserByProjectId.members.length < 1) {
-				console.log(
+				logInfo(
 					'[ERROR USER] [GET USER BY PROJECTID] User not found in the project!'
 				);
 				response.message = 'User not found in the project!';
@@ -310,12 +314,12 @@ module.exports = {
 			response.statusCode = 200;
 			response.message = 'Xử lý thành công';
 			response.content = fetchUserByProjectId.members;
-			console.log(
+			logInfo(
 				`[USER] >> [GET USER BY PROJECTID] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR USER] [GET USER BY PROJECTID] ', JSON.stringify(err));
+			logInfo('[ERROR USER] [GET USER BY PROJECTID] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -332,7 +336,7 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log('[USER] >> [GET USER]');
+			logInfo('[USER] >> [GET USER]');
 
 			let userAll = await UserModel.find(query);
 			userAll = userAll.map((user) => ({
@@ -346,12 +350,12 @@ module.exports = {
 			response.statusCode = 200;
 			response.message = 'Lấy danh sách user thành công!';
 			response.content = userAll;
-			console.log(
+			logInfo(
 				`[USER] >> [GET USER] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR USER] [GET USER] ', JSON.stringify(err));
+			logInfo('[ERROR USER] [GET USER] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -396,8 +400,8 @@ module.exports = {
 	// 		const arr = a.value.filter((ref) => ref !== refreshToken);
 	// 		await TokenModel.updateTokenByIdUser(userId, { value: arr });
 	// 		// var deleteToken = await TokenModel.deleteTokenByUserId(userId);
-	// 		// console.log(userId);
-	// 		// console.log(deleteToken);
+	// 		// logInfo(userId);
+	// 		// logInfo(deleteToken);
 	// 		res.send({ code: '200', msg: 'success' });
 	// 	} catch (error) {
 	// 		if (error === '400') {

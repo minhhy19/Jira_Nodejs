@@ -1,10 +1,16 @@
 // var UserModel = require('../models/User.model.js');
 const _ = require('lodash');
+const logger = require('../../../loggerService');
 const {
 	createProjectCategoryValidation
 } = require('../validations/projectCategory.validation');
 
 const ProjectCategoryModel = require('../models/ProjectCategory.model');
+
+function logInfo(str) {
+	console.log(str);
+	logger.info(str);
+}
 
 module.exports = {
 	getAllCategory: async (req, res) => {
@@ -14,24 +20,23 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log('[PROJECT CATEGORY] >> [GET ALL] payload');
+			logInfo('[PROJECT CATEGORY] >> [GET ALL] payload');
 
 			let projectCategoryAll = await ProjectCategoryModel.find();
 			projectCategoryAll = projectCategoryAll.map((category) => ({
 				id: category.id,
 				projectCategoryName: category.projectCategoryName
 			}));
-			console.log('projectCategoryAll', projectCategoryAll);
 
 			response.statusCode = 200;
 			response.message = 'Lấy danh sách project category thành công!';
 			response.content = projectCategoryAll;
-			console.log(
+			logInfo(
 				`[PROJECT CATEGORY] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR PROJECT CATEGORY] [GET ALL] ', JSON.stringify(err));
+			logInfo('[ERROR PROJECT CATEGORY] [GET ALL] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -46,14 +51,14 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log(
+			logInfo(
 				`[PROJECT CATEGORY] >> [CREATE] payload ${JSON.stringify(req.body)}`
 			);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
 			const { error } = createProjectCategoryValidation(req.body);
 
 			if (error) {
-				console.log(
+				logInfo(
 					'[ERROR PROJECT CATEGORY] [CREATE] ',
 					JSON.stringify(error)
 				);
@@ -66,7 +71,7 @@ module.exports = {
 				projectCategoryName
 			});
 			if (projectCategoryNameExist) {
-				console.log(
+				logInfo(
 					'[ERROR PROJECT] [CREATE] Tên project category đã được sử dụng!'
 				);
 				response.message = 'Tên project category đã được sử dụng!';
@@ -78,12 +83,12 @@ module.exports = {
 			});
 			response.statusCode = 200;
 			response.message = 'Tạo thành công!';
-			console.log(
+			logInfo(
 				`[PROJECT CATEGORY] >> [CREATE] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR PROJECT CATEGORY] [CREATE] ', JSON.stringify(err));
+			logInfo('[ERROR PROJECT CATEGORY] [CREATE] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);

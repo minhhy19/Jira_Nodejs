@@ -1,10 +1,16 @@
 // var UserModel = require('../models/User.model.js');
 const _ = require('lodash');
+const logger = require('../../../loggerService');
 const {
 	createValidation
 } = require('../validations/status.validation');
 
 const StatusModel = require('../models/Status.model');
+
+function logInfo(str) {
+	console.log(str);
+	logger.info(str);
+}
 
 module.exports = {
 	getAll: async (req, res) => {
@@ -14,7 +20,7 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log('[STATUS] >> [GET ALL] payload');
+			logInfo('[STATUS] >> [GET ALL] payload');
 
 			let statusAll = await StatusModel.find();
 			statusAll = statusAll.map((item) => ({
@@ -27,12 +33,12 @@ module.exports = {
 			response.statusCode = 200;
 			response.message = 'Lấy danh sách status thành công!';
 			response.content = statusAll;
-			console.log(
+			logInfo(
 				`[STATUS] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR STATUS] [GET ALL] ', JSON.stringify(err));
+			logInfo('[ERROR STATUS] [GET ALL] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
@@ -47,14 +53,14 @@ module.exports = {
 			content: null
 		};
 		try {
-			console.log(
+			logInfo(
 				`[STATUS] >> [CREATE] payload ${JSON.stringify(req.body)}`
 			);
 			// LETS VALIDATE THE DATA BEFORE WE A USER
 			const { error } = createValidation(req.body);
 
 			if (error) {
-				console.log(
+				logInfo(
 					'[ERROR STATUS] [CREATE] ',
 					JSON.stringify(error)
 				);
@@ -67,7 +73,7 @@ module.exports = {
 				statusName
 			});
 			if (statusExist) {
-				console.log(
+				logInfo(
 					'[ERROR STATUS] [CREATE] Tên status đã được sử dụng!'
 				);
 				response.message = 'Tên status đã được sử dụng!';
@@ -80,12 +86,12 @@ module.exports = {
 			});
 			response.statusCode = 200;
 			response.message = 'Tạo thành công!';
-			console.log(
+			logInfo(
 				`[STATUS] >> [CREATE] response ${JSON.stringify(response)}`
 			);
 			return res.send(response);
 		} catch (err) {
-			console.log('[ERROR STATUS] [CREATE] ', JSON.stringify(err));
+			logInfo('[ERROR STATUS] [CREATE] ', JSON.stringify(err));
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
 			return res.send(response);
