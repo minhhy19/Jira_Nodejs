@@ -85,6 +85,7 @@ const removeUserTaskValidation = (data) => {
 // Update status Validation
 const updateStatusValidation = (data) => {
 	const schema = Joi.object({
+		projectId: Joi.number(),
 		taskId: Joi.number().required(),
 		statusId: Joi.number().required()
 	});
