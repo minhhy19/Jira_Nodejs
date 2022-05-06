@@ -3,6 +3,6 @@ const projectCategoryController = require('./controllers/ProjectCategory.Control
 const { verifyAccessToken } = require('../../helpers/jwt_helpers');
 
 router.get('/', projectCategoryController.getAllCategory);
-// router.post('/createProjectCategory', projectCategoryController.createProjectCategory);
+// router.post('/createProjectCategory', verifyAccessToken, projectCategoryController.createProjectCategory);
 
 module.exports = router;

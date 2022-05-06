@@ -18,7 +18,14 @@ app.use(loggerMidlleware);
 
 const PORT = process.env.PORT || 5500;
 
-app.use(cors());
+app.use(
+	cors({
+		origin: '*',
+		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+		preflightContinue: false,
+		optionsSuccessStatus: 204
+	})
+);
 
 // Import Routes
 const auth = require('./services/user/Auth.route');
