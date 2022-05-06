@@ -34,7 +34,7 @@ module.exports = {
 			req.user = verified;
 		} catch (err) {
 			logInfo(`[VERIFY ACCESS TOKEN] >> [ERROR] ${JSON.stringify(err)}`);
-			res.status(400).send('Invalid Token');
+			return res.status(400).send('Invalid Token');
 			// res.send({ statusCode: 400, message: err });
 		}
 		return next();
