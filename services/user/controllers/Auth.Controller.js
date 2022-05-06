@@ -95,7 +95,7 @@ module.exports = {
 			const { error } = loginValidation(req.body);
 
 			if (error) {
-				logInfo(`[ERROR USER] [SIGNUP] ${JSON.stringify(error)}`);
+				logInfo(`[ERROR USER] [SIGN IN] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
 				return res.send(response);
 			}

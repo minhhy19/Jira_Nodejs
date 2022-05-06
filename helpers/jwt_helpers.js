@@ -1,4 +1,10 @@
 const jwt = require('jsonwebtoken');
+const logger = require('../loggerService');
+
+function logInfo(str) {
+	console.log(str);
+	logger.info(str);
+}
 
 module.exports = {
 	signAccessToken: (userId, payload) => new Promise((resolve, reject) => {
@@ -9,7 +15,7 @@ module.exports = {
 		};
 		jwt.sign(payload, secret, options, (err, token) => {
 			if (err) {
-				console.log(err.message);
+				logInfo(err.message);
 				reject(err);
 			}
 			resolve(token);
@@ -17,15 +23,17 @@ module.exports = {
 	}),
 
 	verifyAccessToken: (req, res, next) => {
+		logInfo(`[VERIFY ACCESS TOKEN] >> [PAYLOAD] ${JSON.stringify(req.headers)}`);
 		let token = req.headers.authorization;
 		if (!token) return res.status(401).send('Access Denied');
 		[, token] = token.split(' ');
+		if (token === 'undefined') return res.status(401).send('Access Denied');
 
 		try {
 			const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 			req.user = verified;
 		} catch (err) {
-			console.log(`[VERIFY ACCESS TOKEN] >> [ERROR] ${JSON.stringify(err)}`);
+			logInfo(`[VERIFY ACCESS TOKEN] >> [ERROR] ${JSON.stringify(err)}`);
 			res.status(400).send('Invalid Token');
 			// res.send({ statusCode: 400, message: err });
 		}
