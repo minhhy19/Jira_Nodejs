@@ -1,6 +1,11 @@
 // VALIDATION
 const Joi = require('joi');
 
+const options = {
+	abortEarly: false, // include all errors
+	allowUnknown: true, // ignore unknown props
+	stripUnknown: true // remove unknown props
+};
 // Register Validation
 const registerValidation = (data) => {
 	const schema = Joi.object({
@@ -16,7 +21,7 @@ const registerValidation = (data) => {
 
 		phoneNumber: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Login Validation
@@ -28,7 +33,7 @@ const loginValidation = (data) => {
 
 		passWord: Joi.string().pattern(/^[a-zA-Z0-9]{3,30}$/).required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Edit User Validation
@@ -48,7 +53,7 @@ const editUserValidation = (data) => {
 
 		phoneNumber: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 module.exports = {

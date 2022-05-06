@@ -2,6 +2,12 @@
 const _ = require('lodash');
 const Joi = require('joi');
 
+const options = {
+	abortEarly: false, // include all errors
+	allowUnknown: true, // ignore unknown props
+	stripUnknown: true // remove unknown props
+};
+
 // Create Validation
 const createValidation = (data) => {
 	const schema = Joi.object({
@@ -9,7 +15,7 @@ const createValidation = (data) => {
 		description: Joi.string().required(),
 		categoryId: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Edit Validation
@@ -20,7 +26,7 @@ const editValidation = (data) => {
 		creator: Joi.number(),
 		categoryId: Joi.number()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 const assignUserProjectValidation = (data) => {
@@ -28,7 +34,7 @@ const assignUserProjectValidation = (data) => {
 		projectId: Joi.number().required(),
 		userId: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Create task Validation
@@ -45,7 +51,7 @@ const createTaskValidation = (data) => {
 		typeId: Joi.number().required(),
 		priorityId: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Update task Validation
@@ -63,7 +69,7 @@ const updateTaskValidation = (data) => {
 		typeId: Joi.number().required(),
 		priorityId: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 const assignUserTaskValidation = (data) => {
@@ -71,7 +77,7 @@ const assignUserTaskValidation = (data) => {
 		taskId: Joi.number().required(),
 		userId: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 const removeUserTaskValidation = (data) => {
@@ -79,7 +85,7 @@ const removeUserTaskValidation = (data) => {
 		taskId: Joi.number().required(),
 		userId: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Update status Validation
@@ -89,7 +95,7 @@ const updateStatusValidation = (data) => {
 		taskId: Joi.number().required(),
 		statusId: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Update priority Validation
@@ -98,7 +104,7 @@ const updatePriorityValidation = (data) => {
 		taskId: Joi.number().required(),
 		priorityId: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Update description Validation
@@ -107,7 +113,7 @@ const updateDescriptionValidation = (data) => {
 		taskId: Joi.number().required(),
 		description: Joi.string().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Update time tracking Validation
@@ -117,7 +123,7 @@ const updateTimeTrackingValidation = (data) => {
 		timeTrackingSpent: Joi.number().required(),
 		timeTrackingRemaining: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 // Update Estimate Validation
@@ -126,7 +132,7 @@ const updateEstimateValidation = (data) => {
 		taskId: Joi.number().required(),
 		originalEstimate: Joi.number().required()
 	});
-	return schema.validate(data);
+	return schema.validate(data, options);
 };
 
 module.exports = {
