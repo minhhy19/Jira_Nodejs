@@ -301,7 +301,6 @@ module.exports = {
 			// 	response.message = 'Không tìm thấy User!';
 			// 	return res.status(response.statusCode).send(response);
 			// }
-			// // logInfo('projectCreator', projectCreator)
 
 			const projectDataEdit = {
 				projectName,
