@@ -457,7 +457,7 @@ module.exports = {
 
 			const arrMemberIdInProject = project.members.map((mem) => (mem.userId));
 
-			if (_.includes(arrMemberIdInProject, userId)) {
+			if (_.includes(arrMemberIdInProject, user.userId)) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] User already exists in the project!');
 				response.message = 'User already exists in the project!';
 				return res.status(response.statusCode).send(response);
