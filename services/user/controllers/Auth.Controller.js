@@ -42,7 +42,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR USER] [SIGNUP] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the user is already in the database
@@ -50,7 +50,7 @@ module.exports = {
 			if (emailExist) {
 				logInfo('[ERROR USER] [SIGNUP] Email đã được sử dụng!');
 				response.message = 'Email đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Hash passwords
@@ -70,12 +70,12 @@ module.exports = {
 			response.statusCode = 200;
 			response.message = 'Đăng ký tài khoản thành công!';
 			logInfo(`[USER] >> [SIGNUP] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR USER] [SIGNUP] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -97,7 +97,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR USER] [SIGN IN] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the email exist
@@ -105,7 +105,7 @@ module.exports = {
 			if (!user) {
 				logInfo('[ERROR USER] [SIGN IN] Email is wrong!');
 				response.message = 'Email is wrong!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// PASSWORD IS CORRECT
@@ -115,7 +115,7 @@ module.exports = {
 			if (hashedPassword !== user.passWord) {
 				logInfo('[ERROR USER] [SIGN IN] Invalid password');
 				response.message = 'Invalid password';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Create and assign a token
@@ -141,12 +141,12 @@ module.exports = {
 				}
 			};
 			logInfo(`[USER] >> [SIGN IN] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (error) {
 			logInfo(`[ERROR USER] [SIGN IN] ${JSON.stringify(error)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -168,7 +168,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR USER] [EDIT USER] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Kiểm tra user trong db
@@ -178,7 +178,7 @@ module.exports = {
 					'[ERROR USER] [EDIT USER] Không tìm thấy thông tin tài khoản'
 				);
 				response.message = 'Không tìm thấy thông tin tài khoản';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the user is already in the database
@@ -191,7 +191,7 @@ module.exports = {
 			if (emailExist) {
 				logInfo('[ERROR USER] [EDIT USER] Email đã được sử dụng!');
 				response.message = 'Email đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Hash passwords
@@ -212,18 +212,18 @@ module.exports = {
 			if (!updated) {
 				logInfo('[ERROR USER] [EDIT USER] Cập nhật thông tin tài khoản thất bại, vui lòng thử lại');
 				response.message = 'Cập nhật thông tin tài khoản thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
 			response.message = 'Cập nhật thông tin tài khoản thành công';
 			logInfo(`[USER] >> [EDIT USER] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR USER] [EDIT USER] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -255,7 +255,7 @@ module.exports = {
 					'[ERROR USER] [DELETE USER] Xóa tài khoản thất bại, vui lòng thử lại'
 				);
 				response.message = 'Xóa tài khoản thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -263,12 +263,12 @@ module.exports = {
 			logInfo(
 				`[USER] >> [DELETE USER] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR USER] [DELETE USER] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -317,12 +317,12 @@ module.exports = {
 			logInfo(
 				`[USER] >> [GET USER BY PROJECTID] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR USER] [GET USER BY PROJECTID] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -353,12 +353,12 @@ module.exports = {
 			logInfo(
 				`[USER] >> [GET USER] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR USER] [GET USER] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	}
 

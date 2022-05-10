@@ -63,12 +63,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -87,7 +87,7 @@ module.exports = {
 					'[ERROR PROJECT] [GET PROJECT DETAIL] Không tìm thấy project!'
 				);
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: projectId });
@@ -96,7 +96,7 @@ module.exports = {
 					'[ERROR PROJECT] [GET PROJECT DETAIL] Không tìm thấy project!'
 				);
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const getTaskByProjectId = await TaskModel.find({ projectId });
@@ -156,12 +156,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [GET PROJECT DETAIL] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [GET PROJECT DETAIL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -180,7 +180,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the user is already in the database
@@ -188,7 +188,7 @@ module.exports = {
 			if (projectNameExist) {
 				logInfo('[ERROR PROJECT] [CREATE] Tên project đã được sử dụng!');
 				response.message = 'Tên project đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const category = await ProjectCategoryModel.findOne({ id: categoryId });
@@ -197,7 +197,7 @@ module.exports = {
 					'[ERROR PROJECT] [CREATE] Không tìm thấy project category!'
 				);
 				response.message = 'Không tìm thấy project category!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const creator = {
@@ -220,7 +220,7 @@ module.exports = {
 			if (_.get(saveProject, 'id', false) === false) {
 				logInfo('[ERROR PROJECT] [CREATE] Tạo project không thành công!');
 				response.message = 'Tạo project không thành công!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -235,12 +235,12 @@ module.exports = {
 				creator: saveProject.creator.id
 			};
 			logInfo(`[PROJECT] >> [CREATE] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -258,7 +258,7 @@ module.exports = {
 			if (projectId === null) {
 				logInfo('[ERROR PROJECT] [EDIT] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			logInfo(`[PROJECT] >> [EDIT] payload ${JSON.stringify(req.body)}`);
@@ -267,14 +267,14 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [EDIT] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: projectId });
 			if (!project) {
 				logInfo('[ERROR PROJECT] [EDIT] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the projectName is already in the database
@@ -285,21 +285,21 @@ module.exports = {
 			if (projectNameExist) {
 				logInfo('[ERROR PROJECT] [EDIT] Tên project đã được sử dụng!');
 				response.message = 'Tên project đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const category = await ProjectCategoryModel.findOne({ id: categoryId });
 			if (!category) {
 				logInfo('[ERROR PROJECT] [EDIT] Không tìm thấy project category!');
 				response.message = 'Không tìm thấy project category!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const user = await UserModel.findOne({ userId: creator });
 			if (!user) {
 				logInfo('[ERROR PROJECT] [EDIT] Không tìm thấy User!');
 				response.message = 'Không tìm thấy User!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 			// logInfo('projectCreator', projectCreator)
 
@@ -332,7 +332,7 @@ module.exports = {
 					'[ERROR PROJECT] [EDIT] Chỉnh sửa project không thành công!'
 				);
 				response.message = 'Chỉnh sửa project không thành công!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -347,12 +347,12 @@ module.exports = {
 				creator: updateProject.creator.id
 			};
 			logInfo(`[PROJECT] >> [EDIT] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [EDIT] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -368,7 +368,7 @@ module.exports = {
 			if (projectId === null) {
 				logInfo('[ERROR PROJECT] [DELETE] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			logInfo(`[PROJECT] >> [DELETE] payload ${JSON.stringify(req.body)}`);
@@ -377,13 +377,13 @@ module.exports = {
 			if (!projectExist) {
 				logInfo('[ERROR PROJECT] [DELETE] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// if (_.toNumber(req.user.aud) !== projectExist.creator.id) {
 			// 	logInfo('[ERROR PROJECT] [DELETE] Không đủ quyền truy cập!!');
 			// 	response.message = 'Không đủ quyền truy cập!';
-			// 	return res.send(response);
+			// 	return res.status(response.statusCode).send(response);
 			// }
 
 			const tasksDeleted = await TaskModel.deleteMany({ projectId });
@@ -392,7 +392,7 @@ module.exports = {
 					'[ERROR PROJECT] [DELETE PROJECT] Xóa project thất bại, vui lòng thử lại'
 				);
 				response.message = 'Xóa project thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const projectDeleted = await ProjectModel.deleteOne({ id: projectId });
@@ -401,18 +401,18 @@ module.exports = {
 					'[ERROR PROJECT] [DELETE PROJECT] Xóa project thất bại, vui lòng thử lại'
 				);
 				response.message = 'Xóa project thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
 			response.message = 'Xóa project thành công!';
 			logInfo(`[PROJECT] >> [DELETE] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [DELETE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -432,27 +432,27 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [ASSIGN USER PROJECT] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: projectId });
 			if (!project) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			if (_.toNumber(req.user.aud) !== project.creator.id) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Không đủ quyền truy cập!');
 				response.message = 'Không đủ quyền truy cập!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const user = await UserModel.findOne({ userId });
 			if (!user) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Không tìm thấy user!');
 				response.message = 'Không tìm thấy user!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const arrMemberIdInProject = project.members.map((mem) => (mem.userId));
@@ -460,7 +460,7 @@ module.exports = {
 			if (_.includes(arrMemberIdInProject, userId)) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] User already exists in the project!');
 				response.message = 'User already exists in the project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAssignToProject = _.pick(user, ['userId', 'name', 'avatar', 'email', 'phoneNumber']);
@@ -474,18 +474,18 @@ module.exports = {
 			if (!assignUserToProject) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Cập nhật thất bại, vui lòng thử lại');
 				response.message = 'Cập nhật thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
 			response.message = 'Has added the user to the project !';
 			logInfo(`[PROJECT] >> [ASSIGN USER PROJECT] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [ASSIGN USER PROJECT] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -505,27 +505,27 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [REMOVE USER PROJECT] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: projectId });
 			if (!project) {
 				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			if (_.toNumber(req.user.aud) !== project.creator.id) {
 				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Không đủ quyền truy cập!');
 				response.message = 'Không đủ quyền truy cập!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const user = await UserModel.findOne({ userId });
 			if (!user) {
 				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Không tìm thấy user!');
 				response.message = 'Không tìm thấy user!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const arrMemberRemoved = project.members.filter((mem) => mem.userId !== userId);
@@ -537,18 +537,18 @@ module.exports = {
 			if (!removeUserFromProject) {
 				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Cập nhật thất bại, vui lòng thử lại');
 				response.message = 'Cập nhật thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
 			response.message = 'Remove user from project successfully !';
 			logInfo(`[PROJECT] >> [REMOVE USER PROJECT] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [REMOVE USER PROJECT] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -581,7 +581,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [CREATE TASK] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the task name is already in the database
@@ -589,7 +589,7 @@ module.exports = {
 			if (taskNameExist) {
 				logInfo('[ERROR PROJECT] [CREATE TASK] Tên task đã được sử dụng!');
 				response.message = 'Tên task đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const creator = {
@@ -601,34 +601,34 @@ module.exports = {
 			if (!project) {
 				logInfo('[ERROR PROJECT] [CREATE TASK] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			if (creator.id !== project.creator.id) {
 				logInfo('[ERROR PROJECT] [CREATE TASK] Không đủ quyền truy cập!!');
 				response.message = 'Không đủ quyền truy cập!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const status = await StatusModel.findOne({ statusId });
 			if (!status) {
 				logInfo('[ERROR PROJECT] [CREATE TASK] Không tìm thấy status!');
 				response.message = 'Không tìm thấy status!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const taskType = await TaskTypeModel.findOne({ id: typeId });
 			if (!taskType) {
 				logInfo('[ERROR PROJECT] [CREATE TASK] Không tìm thấy task type!');
 				response.message = 'Không tìm thấy task type!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const priority = await PriorityModel.findOne({ priorityId });
 			if (!priority) {
 				logInfo('[ERROR PROJECT] [CREATE TASK] Không tìm thấy priority!');
 				response.message = 'Không tìm thấy priority!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAssign = await UserModel.find({
@@ -663,7 +663,7 @@ module.exports = {
 			const saveTask = await TaskModel.create(taskData);
 			if (_.get(saveTask, 'id', false) === false) {
 				logInfo('[ERROR PROJECT] [CREATE TASK] Tạo task không thành công!');
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -688,12 +688,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [CREATE TASK] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [CREATE TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -727,14 +727,14 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [UPDATE TASK] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy task!');
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the task name is already in the database
@@ -745,7 +745,7 @@ module.exports = {
 			if (taskNameExist) {
 				logInfo('[ERROR PROJECT] [UPDATE TASK] Tên task đã được sử dụng!');
 				response.message = 'Tên task đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAction = {
@@ -757,34 +757,34 @@ module.exports = {
 			if (!project) {
 				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			if (userAction.id !== project.creator.id) {
 				logInfo('[ERROR PROJECT] [UPDATE TASK] Không đủ quyền truy cập!!');
 				response.message = 'Không đủ quyền truy cập!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const status = await StatusModel.findOne({ statusId });
 			if (!status) {
 				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy status!');
 				response.message = 'Không tìm thấy status!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const taskType = await TaskTypeModel.findOne({ id: typeId });
 			if (!taskType) {
 				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy task type!');
 				response.message = 'Không tìm thấy task type!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const priority = await PriorityModel.findOne({ priorityId });
 			if (!priority) {
 				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy priority!');
 				response.message = 'Không tìm thấy priority!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAssign = await UserModel.find({
@@ -823,7 +823,7 @@ module.exports = {
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
 				logInfo('[ERROR PROJECT] [UPDATE TASK] Cập nhật task không thành công!');
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -848,12 +848,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [UPDATE TASK] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [UPDATE TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -872,7 +872,7 @@ module.exports = {
 					'[ERROR PROJECT] [GET TASK DETAIL] Không tìm thấy task!'
 				);
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const getListCommentByTaskId = await CommentModel.find({ taskId });
@@ -890,7 +890,7 @@ module.exports = {
 					'[ERROR PROJECT] [GET TASK DETAIL] Không tìm thấy task!'
 				);
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -917,12 +917,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [GET TASK DETAIL] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [GET TASK DETAIL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -946,7 +946,7 @@ module.exports = {
 					'[ERROR PROJECT] [REMOVE TASK] Không tìm thấy task!'
 				);
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
@@ -955,14 +955,14 @@ module.exports = {
 					'[ERROR PROJECT] [REMOVE TASK] Không tìm thấy task!'
 				);
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: task.projectId });
 			if (userAction.id !== project.creator.id) {
 				logInfo('[ERROR PROJECT] [REMOVE TASK] Không đủ quyền truy cập!!');
 				response.message = 'Không đủ quyền truy cập!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const conmentsDeleted = await CommentModel.deleteMany({ taskId });
@@ -971,7 +971,7 @@ module.exports = {
 					'[ERROR PROJECT] [REMOVE TASK] Xóa task thất bại, vui lòng thử lại'
 				);
 				response.message = 'Xóa task thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const taskDeleted = await TaskModel.deleteOne({ taskId });
@@ -980,7 +980,7 @@ module.exports = {
 					'[ERROR PROJECT] [REMOVE TASK] Xóa task thất bại, vui lòng thử lại'
 				);
 				response.message = 'Xóa task thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -988,12 +988,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [REMOVE TASK] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [REMOVE TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -1013,34 +1013,34 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [ASSIGN USER TASK] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Không tìm thấy task!');
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: task.projectId });
 			if (!project) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			if (_.toNumber(req.user.aud) !== project.creator.id) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Không đủ quyền truy cập!');
 				response.message = 'Không đủ quyền truy cập!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const user = await UserModel.findOne({ userId });
 			if (!user) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Không tìm thấy user!');
 				response.message = 'Không tìm thấy user!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const arrAssignessIdInTask = task.assigness.map((mem) => (mem.id));
@@ -1048,7 +1048,7 @@ module.exports = {
 			if (_.includes(arrAssignessIdInTask, userId)) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] User already assign in the task!');
 				response.message = 'User already assign in the task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAssignToTask = {
@@ -1066,18 +1066,18 @@ module.exports = {
 			if (!assignUserToTask) {
 				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Cập nhật thất bại, vui lòng thử lại');
 				response.message = 'Cập nhật thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
 			response.message = 'Has added the user to the task !';
 			logInfo(`[PROJECT] >> [ASSIGN USER TASK] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [ASSIGN USER TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -1097,34 +1097,34 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [REMOVE USER TASK] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Không tìm thấy task!');
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: task.projectId });
 			if (!project) {
 				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Không tìm thấy project!');
 				response.message = 'Không tìm thấy project!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			if (_.toNumber(req.user.aud) !== project.creator.id) {
 				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Không đủ quyền truy cập!');
 				response.message = 'Không đủ quyền truy cập!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const user = await UserModel.findOne({ userId });
 			if (!user) {
 				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Không tìm thấy user!');
 				response.message = 'Không tìm thấy user!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 			const arrMemberRemoved = task.assigness.filter((mem) => mem.id !== userId);
 
@@ -1135,12 +1135,12 @@ module.exports = {
 			response.statusCode = 200;
 			response.message = 'Remove user from task successfully!';
 			logInfo(`[PROJECT] >> [REMOVE USER TASK] response ${JSON.stringify(response)}`);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [REMOVE USER TASK] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -1165,21 +1165,21 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [UPDATE STATUS] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo('[ERROR PROJECT] [UPDATE STATUS] Không tìm thấy task!');
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const status = await StatusModel.findOne({ statusId });
 			if (!status) {
 				logInfo('[ERROR PROJECT] [UPDATE STATUS] Không tìm thấy status!');
 				response.message = 'Không tìm thấy status!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const updateTask = await TaskModel.findOneAndUpdate(
@@ -1189,7 +1189,7 @@ module.exports = {
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
 				logInfo('[ERROR PROJECT] [UPDATE STATUS] Cập nhật task không thành công!');
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -1197,12 +1197,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [UPDATE STATUS] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [UPDATE STATUS] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -1227,14 +1227,14 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [UPDATE PRIORITY] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] Không tìm thấy task!');
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAction = {
@@ -1247,14 +1247,14 @@ module.exports = {
 			if (!_.includes(arrUserAssignTask, userAction.id)) {
 				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] User is not assign!');
 				response.message = 'User is not assign!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const priority = await PriorityModel.findOne({ priorityId });
 			if (!priority) {
 				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] Không tìm thấy priority!');
 				response.message = 'Không tìm thấy priority!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const updateTask = await TaskModel.findOneAndUpdate(
@@ -1264,7 +1264,7 @@ module.exports = {
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
 				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] Cập nhật task không thành công!');
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -1272,12 +1272,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [UPDATE PRIORITY] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [UPDATE PRIORITY] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -1302,14 +1302,14 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [UPDATE DESCRIPTION] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo('[ERROR PROJECT] [UPDATE DESCRIPTION] Không tìm thấy task!');
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAction = {
@@ -1322,7 +1322,7 @@ module.exports = {
 			if (!_.includes(arrUserAssignTask, userAction.id)) {
 				logInfo('[ERROR PROJECT] [UPDATE DESCRIPTION] User is not assign!');
 				response.message = 'User is not assign!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const updateTask = await TaskModel.findOneAndUpdate(
@@ -1332,7 +1332,7 @@ module.exports = {
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
 				logInfo('[ERROR PROJECT] [UPDATE DESCRIPTION] Cập nhật task không thành công!');
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -1340,12 +1340,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [UPDATE DESCRIPTION] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [UPDATE DESCRIPTION] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -1371,14 +1371,14 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [UPDATE TIME TRACKING] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo('[ERROR PROJECT] [UPDATE TIME TRACKING] Không tìm thấy task!');
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAction = {
@@ -1391,7 +1391,7 @@ module.exports = {
 			if (!_.includes(arrUserAssignTask, userAction.id)) {
 				logInfo('[ERROR PROJECT] [UPDATE TIME TRACKING] User is not assign!');
 				response.message = 'User is not assign!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const updateTask = await TaskModel.findOneAndUpdate(
@@ -1401,7 +1401,7 @@ module.exports = {
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
 				logInfo('[ERROR PROJECT] [UPDATE TIME TRACKING] Cập nhật task không thành công!');
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -1409,12 +1409,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [UPDATE TIME TRACKING] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [UPDATE TIME TRACKING] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -1439,14 +1439,14 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT] [UPDATE ESTIMATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo('[ERROR PROJECT] [UPDATE ESTIMATE] Không tìm thấy task!');
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAction = {
@@ -1459,7 +1459,7 @@ module.exports = {
 			if (!_.includes(arrUserAssignTask, userAction.id)) {
 				logInfo('[ERROR PROJECT] [UPDATE ESTIMATE] User is not assign!');
 				response.message = 'User is not assign!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const updateTask = await TaskModel.findOneAndUpdate(
@@ -1469,7 +1469,7 @@ module.exports = {
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
 				logInfo('[ERROR PROJECT] [UPDATE ESTIMATE] Cập nhật task không thành công!');
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -1477,12 +1477,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT] >> [UPDATE ESTIMATE] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT] [UPDATE ESTIMATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	}
 };

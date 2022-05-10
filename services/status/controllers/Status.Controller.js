@@ -36,12 +36,12 @@ module.exports = {
 			logInfo(
 				`[STATUS] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR STATUS] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -62,7 +62,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR STATUS] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the user is already in the database
@@ -74,7 +74,7 @@ module.exports = {
 					'[ERROR STATUS] [CREATE] Tên status đã được sử dụng!'
 				);
 				response.message = 'Tên status đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const saveStatus = await StatusModel.create({
@@ -86,12 +86,12 @@ module.exports = {
 			logInfo(
 				`[STATUS] >> [CREATE] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR STATUS] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	}
 };

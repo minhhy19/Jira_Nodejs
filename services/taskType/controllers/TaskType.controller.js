@@ -32,12 +32,12 @@ module.exports = {
 			logInfo(
 				`[TASKTYPE] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR TASKTYPE] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -56,7 +56,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR TASKTYPE] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const taskTypeExist = await TaskTypeModel.findOne({
@@ -65,7 +65,7 @@ module.exports = {
 			if (taskTypeExist) {
 				logInfo('[ERROR TASKTYPE] [CREATE] Task type đã được sử dụng!');
 				response.message = 'Task type đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const saveTaskType = await TaskTypeModel.create({
@@ -76,12 +76,12 @@ module.exports = {
 			logInfo(
 				`[TASKTYPE] >> [CREATE] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR TASKTYPE] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	}
 };

@@ -38,12 +38,12 @@ module.exports = {
 			logInfo(
 				`[PRIORITY] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PRIORITY] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -64,7 +64,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PRIORITY] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the user is already in the database
@@ -76,7 +76,7 @@ module.exports = {
 					'[ERROR PRIORITY] [CREATE] Priority đã được sử dụng!'
 				);
 				response.message = 'Priority đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const savePriority = await PriorityModel.create({
@@ -89,12 +89,12 @@ module.exports = {
 			logInfo(
 				`[PRIORITY] >> [CREATE] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PRIORITY] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	}
 };

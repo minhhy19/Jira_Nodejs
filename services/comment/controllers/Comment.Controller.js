@@ -33,7 +33,7 @@ module.exports = {
 				response.statusCode = 200;
 				response.message = 'Lấy danh sách comment thành công!';
 				response.content = [];
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			let commentAll = await CommentModel.find({ taskId });
@@ -53,12 +53,12 @@ module.exports = {
 			logInfo(
 				`[COMMENT] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR COMMENT] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -79,7 +79,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR COMMENT] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAction = {
@@ -92,7 +92,7 @@ module.exports = {
 					'[ERROR COMMENT] [CREATE] Không tìm thấy user!'
 				);
 				response.message = 'Không tìm thấy user!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
@@ -101,7 +101,7 @@ module.exports = {
 					'[ERROR COMMENT] [CREATE] Không tìm thấy task!'
 				);
 				response.message = 'Không tìm thấy task!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const commentData = {
@@ -115,7 +115,7 @@ module.exports = {
 			const saveComment = await CommentModel.create(commentData);
 			if (_.get(saveComment, 'id', false) === false) {
 				logInfo('[ERROR COMMENT] [CREATE] Tạo comment không thành công!');
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// const updatedTask = await TaskModel.updateOne(
@@ -134,7 +134,7 @@ module.exports = {
 			// );
 			// if (!updatedTask) {
 			// 	logInfo('[ERROR COMMENT] [CREATE] Cập nhật task không thành công!');
-			// 	return res.send(response);
+			// 	return res.status(response.statusCode).send(response);
 			// }
 
 			response.statusCode = 200;
@@ -143,12 +143,12 @@ module.exports = {
 			logInfo(
 				`[COMMENT] >> [CREATE] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR COMMENT] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -172,7 +172,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR COMMENT] [UPDATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const comment = await CommentModel.findOne({ id: param.id });
@@ -181,7 +181,7 @@ module.exports = {
 					'[ERROR COMMENT] [UPDATE] Không tìm thấy comment!'
 				);
 				response.message = 'Không tìm thấy comment!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAction = {
@@ -203,7 +203,7 @@ module.exports = {
 					'[ERROR COMMENT] [UPDATE] Không tìm thấy user!'
 				);
 				response.message = 'Không tìm thấy user!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const commentDataUpdate = {
@@ -222,7 +222,7 @@ module.exports = {
 					'[ERROR COMMENT] [UPDATE] Cập nhật comment không thành công!'
 				);
 				response.message = 'Cập nhật comment không thành công!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -231,12 +231,12 @@ module.exports = {
 			logInfo(
 				`[COMMENT] >> [UPDATE] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR COMMENT] [UPDATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -256,7 +256,7 @@ module.exports = {
 					'[ERROR COMMENT] [DELETE] Không tìm thấy comment!'
 				);
 				response.message = 'Không tìm thấy comment!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const userAction = {
@@ -278,7 +278,7 @@ module.exports = {
 					'[ERROR COMMENT] [DELETE] Không tìm thấy user!'
 				);
 				response.message = 'Không tìm thấy user!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const commentDeleted = await CommentModel.deleteOne({ id });
@@ -287,7 +287,7 @@ module.exports = {
 					'[ERROR COMMENT] [DELETE] Xóa comment thất bại, vui lòng thử lại'
 				);
 				response.message = 'Xóa comment thất bại, vui lòng thử lại';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
@@ -295,12 +295,12 @@ module.exports = {
 			logInfo(
 				`[COMMENT] >> [UPDATE] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR COMMENT] [UPDATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	}
 };

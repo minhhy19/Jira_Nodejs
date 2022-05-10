@@ -34,12 +34,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT CATEGORY] >> [GET ALL] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT CATEGORY] [GET ALL] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	},
 
@@ -60,7 +60,7 @@ module.exports = {
 			if (error) {
 				logInfo(`[ERROR PROJECT CATEGORY] [CREATE] ${JSON.stringify(error)}`);
 				response.message = error.details[0].message;
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			// Checking if the user is already in the database
@@ -72,7 +72,7 @@ module.exports = {
 					'[ERROR PROJECT] [CREATE] Tên project category đã được sử dụng!'
 				);
 				response.message = 'Tên project category đã được sử dụng!';
-				return res.send(response);
+				return res.status(response.statusCode).send(response);
 			}
 
 			const saveProjectCategory = await ProjectCategoryModel.create({
@@ -83,12 +83,12 @@ module.exports = {
 			logInfo(
 				`[PROJECT CATEGORY] >> [CREATE] response ${JSON.stringify(response)}`
 			);
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		} catch (err) {
 			logInfo(`[ERROR PROJECT CATEGORY] [CREATE] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
-			return res.send(response);
+			return res.status(response.statusCode).send(response);
 		}
 	}
 };
