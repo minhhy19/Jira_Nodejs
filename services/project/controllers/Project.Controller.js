@@ -348,6 +348,7 @@ module.exports = {
 			logInfo(`[PROJECT] >> [EDIT] response ${JSON.stringify(response)}`);
 			return res.status(response.statusCode).send(response);
 		} catch (err) {
+			logInfo(err);
 			logInfo(`[ERROR PROJECT] [EDIT] ${JSON.stringify(err)}`);
 			response.statusCode = 500;
 			response.message = 'Internal Server Error';
