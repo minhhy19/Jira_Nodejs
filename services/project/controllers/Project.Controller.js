@@ -295,13 +295,6 @@ module.exports = {
 				return res.status(response.statusCode).send(response);
 			}
 
-			const user = await UserModel.findOne({ userId: creator });
-			// if (!user) {
-			// 	logInfo('[ERROR PROJECT] [EDIT] Không tìm thấy User!');
-			// 	response.message = 'Không tìm thấy User!';
-			// 	return res.status(response.statusCode).send(response);
-			// }
-
 			const projectDataEdit = {
 				projectName,
 				description,
@@ -313,7 +306,8 @@ module.exports = {
 			};
 
 			// trường hợp creator của project trong db với user token là 1 ng thì cho update creator
-			if (project.creator.id === _.toNumber(req.user.aud) && user.userId) {
+			const user = await UserModel.findOne({ userId: creator });
+			if (project.creator.id === _.toNumber(req.user.aud) && _.get(user, 'userId', false)) {
 				projectDataEdit.creator = {
 					id: user.userId,
 					name: user.name
