@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "dev": "pm2-runtime start ecosystem.config.js --env production"
   },
   "author": "",
   "license": "ISC",
@@ -26,7 +27,8 @@
     "pino": "^6.11.3",
     "pino-http": "^7.0.0",
     "pino-logflare": "^0.3.12",
-    "pino-pretty": "^5.0.2"
+    "pino-pretty": "^5.0.2",
+    "pm2": "^5.2.0"
   },
   "devDependencies": {
     "eslint": "^8.13.0",
