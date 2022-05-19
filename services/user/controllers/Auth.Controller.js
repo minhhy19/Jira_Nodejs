@@ -26,7 +26,7 @@ module.exports = {
 		} = req.body;
 		const response = {
 			statusCode: 400,
-			message: 'Đăng ký tài khoản thất bại!',
+			message: 'Register failed!',
 			content: {
 				email,
 				passWord,
@@ -48,8 +48,8 @@ module.exports = {
 			// Checking if the user is already in the database
 			const emailExist = await UserModel.findOne({ email });
 			if (emailExist) {
-				logInfo('[ERROR USER] [SIGNUP] Email đã được sử dụng!');
-				response.message = 'Email đã được sử dụng!';
+				logInfo('[ERROR USER] [SIGNUP] Email already exists!');
+				response.message = 'Email already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -68,7 +68,7 @@ module.exports = {
 
 			const saveUser = await UserModel.create(user);
 			response.statusCode = 200;
-			response.message = 'Đăng ký tài khoản thành công!';
+			response.message = 'Register successfully!';
 			logInfo(`[USER] >> [SIGNUP] response ${JSON.stringify(response)}`);
 			return res.status(response.statusCode).send(response);
 		} catch (err) {
@@ -83,7 +83,7 @@ module.exports = {
 		const { email, passWord } = req.body;
 		let response = {
 			statusCode: 400,
-			message: 'Tài khoản hoặc mật khẩu không đúng!',
+			message: 'Incorrect email or password!',
 			content: {
 				email,
 				passWord
@@ -133,7 +133,7 @@ module.exports = {
 
 			response = {
 				statusCode: 200,
-				message: 'Đăng nhập thành công!',
+				message: 'Login successfully!',
 				content: {
 					id: user.userId,
 					...dataUserInternal,
@@ -156,7 +156,7 @@ module.exports = {
 		} = req.body;
 		const response = {
 			statusCode: 400,
-			message: 'Cập nhật thông tin tài khoản thất bại',
+			message: 'Update account info failed',
 			content: null
 		};
 
@@ -175,9 +175,9 @@ module.exports = {
 			const userExist = await UserModel.findOne({ userId: id });
 			if (!userExist) {
 				logInfo(
-					'[ERROR USER] [EDIT USER] Không tìm thấy thông tin tài khoản'
+					'[ERROR USER] [EDIT USER] Account info not found'
 				);
-				response.message = 'Không tìm thấy thông tin tài khoản';
+				response.message = 'Account info not found';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -189,8 +189,8 @@ module.exports = {
 				}
 			});
 			if (emailExist) {
-				logInfo('[ERROR USER] [EDIT USER] Email đã được sử dụng!');
-				response.message = 'Email đã được sử dụng!';
+				logInfo('[ERROR USER] [EDIT USER] Email already exists!');
+				response.message = 'Email already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -210,13 +210,13 @@ module.exports = {
 			);
 
 			if (!updated) {
-				logInfo('[ERROR USER] [EDIT USER] Cập nhật thông tin tài khoản thất bại, vui lòng thử lại');
-				response.message = 'Cập nhật thông tin tài khoản thất bại, vui lòng thử lại';
+				logInfo('[ERROR USER] [EDIT USER] Update account info failed, please try again');
+				response.message = 'Update account info failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Cập nhật thông tin tài khoản thành công';
+			response.message = 'Update account info successfully';
 			logInfo(`[USER] >> [EDIT USER] response ${JSON.stringify(response)}`);
 			return res.status(response.statusCode).send(response);
 		} catch (err) {
@@ -231,7 +231,7 @@ module.exports = {
 		const { id } = req.query;
 		const response = {
 			statusCode: 400,
-			message: 'Xóa tài khoản thất bại',
+			message: 'Delete user failed',
 			content: null
 		};
 
@@ -243,7 +243,7 @@ module.exports = {
 			// Nếu tài khoản xóa khác với tài khoản đã đăng nhập thì trả lỗi 401
 			if (id !== req.user.aud) {
 				logInfo(
-					'[ERROR USER] [DELETE USER] Tài khoản khác với tài khoản đã đăng nhập'
+					'[ERROR USER] [DELETE USER] The account is different from the one logged in'
 				);
 				return res.status(403).send('Forbidden');
 			}
@@ -252,14 +252,14 @@ module.exports = {
 
 			if (!deleted || deleted.deletedCount < 1) {
 				logInfo(
-					'[ERROR USER] [DELETE USER] Xóa tài khoản thất bại, vui lòng thử lại'
+					'[ERROR USER] [DELETE USER] Delete user failed, please try again'
 				);
-				response.message = 'Xóa tài khoản thất bại, vui lòng thử lại';
+				response.message = 'Delete user failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Xóa tài khoản thành công';
+			response.message = 'Delete user successfully';
 			logInfo(
 				`[USER] >> [DELETE USER] response ${JSON.stringify(response)}`
 			);
@@ -276,7 +276,7 @@ module.exports = {
 		const idProject = _.get(req, 'query.idProject', null);
 		const response = {
 			statusCode: 400,
-			message: 'Xóa tài khoản thất bại',
+			message: 'Delete user failed',
 			content: null
 		};
 
@@ -287,19 +287,19 @@ module.exports = {
 
 			if (idProject === null) {
 				logInfo(
-					'[ERROR USER] [GET USER BY PROJECTID] Không tìm thấy projectId'
+					'[ERROR USER] [GET USER BY PROJECTID] ProjectId not found'
 				);
 				response.statusCode = 404;
-				response.message = 'User not found in the project!';
+				response.message = 'ProjectId not found!';
 				return res.status(404).send(response);
 			}
 
 			const fetchUserByProjectId = await ProjectModel.findOne({ id: idProject });
 			if (!fetchUserByProjectId) {
 				logInfo(
-					'[ERROR USER] [GET USER BY PROJECTID] Không tìm thấy projectId'
+					'[ERROR USER] [GET USER BY PROJECTID] ProjectId not found'
 				);
-				response.message = 'Không tìm thấy projectId';
+				response.message = 'ProjectId not found';
 				return res.status(404).send(response);
 			}
 
@@ -312,7 +312,7 @@ module.exports = {
 			}
 
 			response.statusCode = 200;
-			response.message = 'Xử lý thành công';
+			response.message = 'Request successfully';
 			response.content = fetchUserByProjectId.members;
 			logInfo(
 				`[USER] >> [GET USER BY PROJECTID] response ${JSON.stringify(response)}`
@@ -332,7 +332,7 @@ module.exports = {
 		};
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -348,7 +348,7 @@ module.exports = {
 			}));
 
 			response.statusCode = 200;
-			response.message = 'Lấy danh sách user thành công!';
+			response.message = 'Get list user successfully!';
 			response.content = userAll;
 			logInfo(
 				`[USER] >> [GET USER] response ${JSON.stringify(response)}`

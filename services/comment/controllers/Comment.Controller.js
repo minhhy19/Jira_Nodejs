@@ -20,7 +20,7 @@ module.exports = {
 		const taskId = _.get(req, 'query.taskId', null);
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -28,10 +28,10 @@ module.exports = {
 
 			if (taskId === null) {
 				logInfo(
-					'[ERROR COMMENT] [GET ALL] Không tìm thấy task!'
+					'[ERROR COMMENT] [GET ALL] Task not found!'
 				);
 				response.statusCode = 200;
-				response.message = 'Lấy danh sách comment thành công!';
+				response.message = 'Task not found!';
 				response.content = [];
 				return res.status(response.statusCode).send(response);
 			}
@@ -48,7 +48,7 @@ module.exports = {
 			}));
 
 			response.statusCode = 200;
-			response.message = 'Lấy danh sách comment thành công!';
+			response.message = 'Get all comment successfully!';
 			response.content = commentAll;
 			logInfo(
 				`[COMMENT] >> [GET ALL] response ${JSON.stringify(response)}`
@@ -66,7 +66,7 @@ module.exports = {
 		const { taskId, contentComment } = req.body;
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -89,18 +89,18 @@ module.exports = {
 			const user = await UserModel.findOne({ userId: userAction.id });
 			if (!user) {
 				logInfo(
-					'[ERROR COMMENT] [CREATE] Không tìm thấy user!'
+					'[ERROR COMMENT] [CREATE] User not found!'
 				);
-				response.message = 'Không tìm thấy user!';
+				response.message = 'User not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo(
-					'[ERROR COMMENT] [CREATE] Không tìm thấy task!'
+					'[ERROR COMMENT] [CREATE] Task not found!'
 				);
-				response.message = 'Không tìm thấy task!';
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -114,7 +114,7 @@ module.exports = {
 
 			const saveComment = await CommentModel.create(commentData);
 			if (_.get(saveComment, 'id', false) === false) {
-				logInfo('[ERROR COMMENT] [CREATE] Tạo comment không thành công!');
+				logInfo('[ERROR COMMENT] [CREATE] Save comment failed!');
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -138,7 +138,7 @@ module.exports = {
 			// }
 
 			response.statusCode = 200;
-			response.message = 'Tạo thành công!';
+			response.message = 'Create comment successfully!';
 			response.content = _.pick(saveComment, ['id', 'userId', 'taskId', 'contentComment', 'deleted', 'alias']);
 			logInfo(
 				`[COMMENT] >> [CREATE] response ${JSON.stringify(response)}`
@@ -159,7 +159,7 @@ module.exports = {
 		};
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -178,9 +178,9 @@ module.exports = {
 			const comment = await CommentModel.findOne({ id: param.id });
 			if (!comment) {
 				logInfo(
-					'[ERROR COMMENT] [UPDATE] Không tìm thấy comment!'
+					'[ERROR COMMENT] [UPDATE] Comment not found!'
 				);
-				response.message = 'Không tìm thấy comment!';
+				response.message = 'Comment not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -200,9 +200,9 @@ module.exports = {
 			const user = await UserModel.findOne({ userId: userAction.id });
 			if (!user) {
 				logInfo(
-					'[ERROR COMMENT] [UPDATE] Không tìm thấy user!'
+					'[ERROR COMMENT] [UPDATE] User not found!'
 				);
-				response.message = 'Không tìm thấy user!';
+				response.message = 'User not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -219,14 +219,14 @@ module.exports = {
 			);
 			if (!_.isObject(updateComment) || !_.get(updateComment, 'id', false)) {
 				logInfo(
-					'[ERROR COMMENT] [UPDATE] Cập nhật comment không thành công!'
+					'[ERROR COMMENT] [UPDATE] Update comment failed!'
 				);
-				response.message = 'Cập nhật comment không thành công!';
+				response.message = 'Update comment failed!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Cập nhật comment thành công!';
+			response.message = 'Update comment successfully!';
 			response.content = _.pick(updateComment, ['id', 'userId', 'taskId', 'contentComment', 'deleted', 'alias']);
 			logInfo(
 				`[COMMENT] >> [UPDATE] response ${JSON.stringify(response)}`
@@ -244,7 +244,7 @@ module.exports = {
 		const id = _.get(req, 'query.idComment', null);
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -253,9 +253,9 @@ module.exports = {
 			const comment = await CommentModel.findOne({ id });
 			if (!comment) {
 				logInfo(
-					'[ERROR COMMENT] [DELETE] Không tìm thấy comment!'
+					'[ERROR COMMENT] [DELETE] Comment not found!'
 				);
-				response.message = 'Không tìm thấy comment!';
+				response.message = 'Comment not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -275,18 +275,18 @@ module.exports = {
 			const user = await UserModel.findOne({ userId: userAction.id });
 			if (!user) {
 				logInfo(
-					'[ERROR COMMENT] [DELETE] Không tìm thấy user!'
+					'[ERROR COMMENT] [DELETE] User not found!'
 				);
-				response.message = 'Không tìm thấy user!';
+				response.message = 'User not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const commentDeleted = await CommentModel.deleteOne({ id });
 			if (!commentDeleted || commentDeleted.deletedCount < 1) {
 				logInfo(
-					'[ERROR COMMENT] [DELETE] Xóa comment thất bại, vui lòng thử lại'
+					'[ERROR COMMENT] [DELETE] Delete comment failed, please try again'
 				);
-				response.message = 'Xóa comment thất bại, vui lòng thử lại';
+				response.message = 'Delete comment failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 

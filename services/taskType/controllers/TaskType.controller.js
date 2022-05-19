@@ -14,7 +14,7 @@ module.exports = {
 	getAll: async (req, res) => {
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -27,7 +27,7 @@ module.exports = {
 			}));
 
 			response.statusCode = 200;
-			response.message = 'Lấy danh sách task type thành công!';
+			response.message = 'Get all task type successfully!';
 			response.content = taskTypeAll;
 			logInfo(
 				`[TASKTYPE] >> [GET ALL] response ${JSON.stringify(response)}`
@@ -45,7 +45,7 @@ module.exports = {
 		const { taskType } = req.body;
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -63,8 +63,8 @@ module.exports = {
 				taskType
 			});
 			if (taskTypeExist) {
-				logInfo('[ERROR TASKTYPE] [CREATE] Task type đã được sử dụng!');
-				response.message = 'Task type đã được sử dụng!';
+				logInfo('[ERROR TASKTYPE] [CREATE] Task type name already exists!');
+				response.message = 'Task type name already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -72,7 +72,7 @@ module.exports = {
 				taskType
 			});
 			response.statusCode = 200;
-			response.message = 'Tạo thành công!';
+			response.message = 'Create task type successfully!';
 			logInfo(
 				`[TASKTYPE] >> [CREATE] response ${JSON.stringify(response)}`
 			);

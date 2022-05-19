@@ -38,7 +38,7 @@ module.exports = {
 		};
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -58,7 +58,7 @@ module.exports = {
 			}));
 
 			response.statusCode = 200;
-			response.message = 'Lấy danh sách project thành công!';
+			response.message = 'Get all project successfully!';
 			response.content = projectAll;
 			logInfo(
 				`[PROJECT] >> [GET ALL] response ${JSON.stringify(response)}`
@@ -76,7 +76,7 @@ module.exports = {
 		const projectId = _.get(req, 'query.id', null);
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -84,18 +84,18 @@ module.exports = {
 
 			if (projectId === null) {
 				logInfo(
-					'[ERROR PROJECT] [GET PROJECT DETAIL] Không tìm thấy project!'
+					'[ERROR PROJECT] [GET PROJECT DETAIL] Project not found!'
 				);
-				response.message = 'Không tìm thấy project!';
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: projectId });
 			if (!project) {
 				logInfo(
-					'[ERROR PROJECT] [GET PROJECT DETAIL] Không tìm thấy project!'
+					'[ERROR PROJECT] [GET PROJECT DETAIL] Project not found!'
 				);
-				response.message = 'Không tìm thấy project!';
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -140,7 +140,7 @@ module.exports = {
 			}));
 
 			response.statusCode = 200;
-			response.message = 'Lấy chi tiết project thành công!';
+			response.message = 'Get project detail succesfully!';
 			response.content = {
 				lstTask,
 				..._.pick(project, [
@@ -169,7 +169,7 @@ module.exports = {
 		const { projectName, description, categoryId } = req.body;
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -183,20 +183,20 @@ module.exports = {
 				return res.status(response.statusCode).send(response);
 			}
 
-			// Checking if the user is already in the database
+			// Checking if the projectName is already in the database
 			const projectNameExist = await ProjectModel.findOne({ projectName });
 			if (projectNameExist) {
-				logInfo('[ERROR PROJECT] [CREATE] Tên project đã được sử dụng!');
-				response.message = 'Tên project đã được sử dụng!';
+				logInfo('[ERROR PROJECT] [CREATE] Project name already exists!');
+				response.message = 'Project name already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const category = await ProjectCategoryModel.findOne({ id: categoryId });
 			if (!category) {
 				logInfo(
-					'[ERROR PROJECT] [CREATE] Không tìm thấy project category!'
+					'[ERROR PROJECT] [CREATE] Project category not found!'
 				);
-				response.message = 'Không tìm thấy project category!';
+				response.message = 'Project category not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -218,13 +218,13 @@ module.exports = {
 
 			const saveProject = await ProjectModel.create(project);
 			if (_.get(saveProject, 'id', false) === false) {
-				logInfo('[ERROR PROJECT] [CREATE] Tạo project không thành công!');
-				response.message = 'Tạo project không thành công!';
+				logInfo('[ERROR PROJECT] [CREATE] Save project failed!');
+				response.message = 'Save project failed!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Tạo project thành công!';
+			response.message = 'Create project successfully!';
 			response.content = {
 				id: saveProject.id,
 				projectName: saveProject.projectName,
@@ -251,17 +251,17 @@ module.exports = {
 		} = req.body;
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
+			logInfo(`[PROJECT] >> [EDIT] payload ${JSON.stringify(req.body)}`);
 			if (projectId === null) {
-				logInfo('[ERROR PROJECT] [EDIT] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [EDIT] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
-			logInfo(`[PROJECT] >> [EDIT] payload ${JSON.stringify(req.body)}`);
 			// LETS VALIDATE THE DATA
 			const { error } = editValidation(req.body);
 			if (error) {
@@ -272,8 +272,8 @@ module.exports = {
 
 			const project = await ProjectModel.findOne({ id: projectId });
 			if (!project) {
-				logInfo('[ERROR PROJECT] [EDIT] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [EDIT] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -283,15 +283,15 @@ module.exports = {
 				id: { $ne: project.id }
 			});
 			if (projectNameExist) {
-				logInfo('[ERROR PROJECT] [EDIT] Tên project đã được sử dụng!');
-				response.message = 'Tên project đã được sử dụng!';
+				logInfo('[ERROR PROJECT] [EDIT] Project name already exists!');
+				response.message = 'Project name already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const category = await ProjectCategoryModel.findOne({ id: categoryId });
 			if (!category) {
-				logInfo('[ERROR PROJECT] [EDIT] Không tìm thấy project category!');
-				response.message = 'Không tìm thấy project category!';
+				logInfo('[ERROR PROJECT] [EDIT] Project category not found!');
+				response.message = 'Project category not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -322,14 +322,14 @@ module.exports = {
 
 			if (!_.isObject(updateProject) || !_.get(updateProject, 'id', false)) {
 				logInfo(
-					'[ERROR PROJECT] [EDIT] Chỉnh sửa project không thành công!'
+					'[ERROR PROJECT] [EDIT] Edit project failed!'
 				);
-				response.message = 'Chỉnh sửa project không thành công!';
+				response.message = 'Edit project failed!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Chỉnh sửa project thành công!';
+			response.message = 'Edit project successfully!';
 			response.content = {
 				id: updateProject.id,
 				projectName: updateProject.projectName,
@@ -355,51 +355,50 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
+			logInfo(`[PROJECT] >> [DELETE] payload ${JSON.stringify(req.body)}`);
 			if (projectId === null) {
-				logInfo('[ERROR PROJECT] [DELETE] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [DELETE] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
-			logInfo(`[PROJECT] >> [DELETE] payload ${JSON.stringify(req.body)}`);
-
 			const projectExist = await ProjectModel.findOne({ id: projectId });
 			if (!projectExist) {
-				logInfo('[ERROR PROJECT] [DELETE] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [DELETE] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			// if (_.toNumber(req.user.aud) !== projectExist.creator.id) {
-			// 	logInfo('[ERROR PROJECT] [DELETE] Không đủ quyền truy cập!!');
-			// 	response.message = 'Không đủ quyền truy cập!';
+			// 	logInfo('[ERROR PROJECT] [DELETE] User is unthorization!!');
+			// 	response.message = 'User is unthorization!';
 			// 	return res.status(response.statusCode).send(response);
 			// }
 
 			const tasksDeleted = await TaskModel.deleteMany({ projectId });
 			if (!tasksDeleted) {
 				logInfo(
-					'[ERROR PROJECT] [DELETE PROJECT] Xóa project thất bại, vui lòng thử lại'
+					'[ERROR PROJECT] [DELETE PROJECT] Delete project failed, please try again'
 				);
-				response.message = 'Xóa project thất bại, vui lòng thử lại';
+				response.message = 'Delete project failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const projectDeleted = await ProjectModel.deleteOne({ id: projectId });
 			if (!projectDeleted || projectDeleted.deletedCount < 1) {
 				logInfo(
-					'[ERROR PROJECT] [DELETE PROJECT] Xóa project thất bại, vui lòng thử lại'
+					'[ERROR PROJECT] [DELETE PROJECT] Delete project failed, please try again'
 				);
-				response.message = 'Xóa project thất bại, vui lòng thử lại';
+				response.message = 'Delete project failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Xóa project thành công!';
+			response.message = 'Delete project successfully!';
 			logInfo(`[PROJECT] >> [DELETE] response ${JSON.stringify(response)}`);
 			return res.status(response.statusCode).send(response);
 		} catch (err) {
@@ -417,7 +416,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -431,21 +430,21 @@ module.exports = {
 
 			const project = await ProjectModel.findOne({ id: projectId });
 			if (!project) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			if (_.toNumber(req.user.aud) !== project.creator.id) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Không đủ quyền truy cập!');
-				response.message = 'Không đủ quyền truy cập!';
+				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] User is unthorization!');
+				response.message = 'User is unthorization!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const user = await UserModel.findOne({ userId });
 			if (!user) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Không tìm thấy user!');
-				response.message = 'Không tìm thấy user!';
+				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] User not found!');
+				response.message = 'User not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -466,8 +465,8 @@ module.exports = {
 			});
 
 			if (!assignUserToProject) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Cập nhật thất bại, vui lòng thử lại');
-				response.message = 'Cập nhật thất bại, vui lòng thử lại';
+				logInfo('[ERROR PROJECT] [ASSIGN USER PROJECT] Update failed, please try again');
+				response.message = 'Update failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -490,7 +489,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -504,21 +503,21 @@ module.exports = {
 
 			const project = await ProjectModel.findOne({ id: projectId });
 			if (!project) {
-				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			if (_.toNumber(req.user.aud) !== project.creator.id) {
-				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Không đủ quyền truy cập!');
-				response.message = 'Không đủ quyền truy cập!';
+				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] User is unthorization!');
+				response.message = 'User is unthorization!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const user = await UserModel.findOne({ userId });
 			if (!user) {
-				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Không tìm thấy user!');
-				response.message = 'Không tìm thấy user!';
+				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] User not found!');
+				response.message = 'User not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -529,8 +528,8 @@ module.exports = {
 			});
 
 			if (!removeUserFromProject) {
-				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Cập nhật thất bại, vui lòng thử lại');
-				response.message = 'Cập nhật thất bại, vui lòng thử lại';
+				logInfo('[ERROR PROJECT] [REMOVE USER PROJECT] Update failed, please try again');
+				response.message = 'Update failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -562,7 +561,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -581,8 +580,8 @@ module.exports = {
 			// Checking if the task name is already in the database
 			const taskNameExist = await TaskModel.findOne({ taskName });
 			if (taskNameExist) {
-				logInfo('[ERROR PROJECT] [CREATE TASK] Tên task đã được sử dụng!');
-				response.message = 'Tên task đã được sử dụng!';
+				logInfo('[ERROR PROJECT] [CREATE TASK] Task name already exists!');
+				response.message = 'Task name already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -593,35 +592,35 @@ module.exports = {
 
 			const project = await ProjectModel.findOne({ id: projectId });
 			if (!project) {
-				logInfo('[ERROR PROJECT] [CREATE TASK] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [CREATE TASK] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			if (creator.id !== project.creator.id) {
-				logInfo('[ERROR PROJECT] [CREATE TASK] Không đủ quyền truy cập!!');
-				response.message = 'Không đủ quyền truy cập!';
+				logInfo('[ERROR PROJECT] [CREATE TASK] User is unthorization!!');
+				response.message = 'User is unthorization!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const status = await StatusModel.findOne({ statusId });
 			if (!status) {
-				logInfo('[ERROR PROJECT] [CREATE TASK] Không tìm thấy status!');
-				response.message = 'Không tìm thấy status!';
+				logInfo('[ERROR PROJECT] [CREATE TASK] Status not found!');
+				response.message = 'Status not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const taskType = await TaskTypeModel.findOne({ id: typeId });
 			if (!taskType) {
-				logInfo('[ERROR PROJECT] [CREATE TASK] Không tìm thấy task type!');
-				response.message = 'Không tìm thấy task type!';
+				logInfo('[ERROR PROJECT] [CREATE TASK] Task type not found!');
+				response.message = 'Task type not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const priority = await PriorityModel.findOne({ priorityId });
 			if (!priority) {
-				logInfo('[ERROR PROJECT] [CREATE TASK] Không tìm thấy priority!');
-				response.message = 'Không tìm thấy priority!';
+				logInfo('[ERROR PROJECT] [CREATE TASK] Priority not found!');
+				response.message = 'Priority not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -656,12 +655,12 @@ module.exports = {
 
 			const saveTask = await TaskModel.create(taskData);
 			if (_.get(saveTask, 'id', false) === false) {
-				logInfo('[ERROR PROJECT] [CREATE TASK] Tạo task không thành công!');
+				logInfo('[ERROR PROJECT] [CREATE TASK] Save task failed!');
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Tạo task thành công!';
+			response.message = 'Create task successfully!';
 			response.content = {
 				..._.pick(saveTask, [
 					'taskId',
@@ -708,7 +707,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -726,8 +725,8 @@ module.exports = {
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
-				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy task!');
-				response.message = 'Không tìm thấy task!';
+				logInfo('[ERROR PROJECT] [UPDATE TASK] Task not found!');
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -737,8 +736,8 @@ module.exports = {
 				taskId: { $ne: task.taskId }
 			});
 			if (taskNameExist) {
-				logInfo('[ERROR PROJECT] [UPDATE TASK] Tên task đã được sử dụng!');
-				response.message = 'Tên task đã được sử dụng!';
+				logInfo('[ERROR PROJECT] [UPDATE TASK] Task name already exists!');
+				response.message = 'Task name already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -749,35 +748,35 @@ module.exports = {
 
 			const project = await ProjectModel.findOne({ id: projectId });
 			if (!project) {
-				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [UPDATE TASK] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			if (userAction.id !== project.creator.id) {
-				logInfo('[ERROR PROJECT] [UPDATE TASK] Không đủ quyền truy cập!!');
-				response.message = 'Không đủ quyền truy cập!';
+				logInfo('[ERROR PROJECT] [UPDATE TASK] User is unthorization!!');
+				response.message = 'User is unthorization!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const status = await StatusModel.findOne({ statusId });
 			if (!status) {
-				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy status!');
-				response.message = 'Không tìm thấy status!';
+				logInfo('[ERROR PROJECT] [UPDATE TASK] Status not found!');
+				response.message = 'Status not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const taskType = await TaskTypeModel.findOne({ id: typeId });
 			if (!taskType) {
-				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy task type!');
-				response.message = 'Không tìm thấy task type!';
+				logInfo('[ERROR PROJECT] [UPDATE TASK] Task type not found!');
+				response.message = 'Task type not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const priority = await PriorityModel.findOne({ priorityId });
 			if (!priority) {
-				logInfo('[ERROR PROJECT] [UPDATE TASK] Không tìm thấy priority!');
-				response.message = 'Không tìm thấy priority!';
+				logInfo('[ERROR PROJECT] [UPDATE TASK] Priority not found!');
+				response.message = 'Priority not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -816,12 +815,12 @@ module.exports = {
 				{ new: true }
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
-				logInfo('[ERROR PROJECT] [UPDATE TASK] Cập nhật task không thành công!');
+				logInfo('[ERROR PROJECT] [UPDATE TASK] Update task failed!');
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Cập nhật task thành công!';
+			response.message = 'Update task successfully';
 			response.content = {
 				..._.pick(updateTask, [
 					'taskId',
@@ -855,7 +854,7 @@ module.exports = {
 		const taskId = _.get(req, 'query.taskId', null);
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -863,9 +862,9 @@ module.exports = {
 
 			if (taskId === null) {
 				logInfo(
-					'[ERROR PROJECT] [GET TASK DETAIL] Không tìm thấy task!'
+					'[ERROR PROJECT] [GET TASK DETAIL] Task not found!'
 				);
-				response.message = 'Không tìm thấy task!';
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -881,14 +880,14 @@ module.exports = {
 			const taskDetail = await TaskModel.findOne({ taskId });
 			if (!taskDetail) {
 				logInfo(
-					'[ERROR PROJECT] [GET TASK DETAIL] Không tìm thấy task!'
+					'[ERROR PROJECT] [GET TASK DETAIL] Task not found!'
 				);
-				response.message = 'Không tìm thấy task!';
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Lấy chi tiết task thành công!';
+			response.message = 'Get task detail successfully!';
 			response.content = {
 				lstComment,
 				..._.pick(taskDetail, [
@@ -924,7 +923,7 @@ module.exports = {
 		const taskId = _.get(req, 'query.taskId', null);
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -937,48 +936,48 @@ module.exports = {
 
 			if (taskId === null) {
 				logInfo(
-					'[ERROR PROJECT] [REMOVE TASK] Không tìm thấy task!'
+					'[ERROR PROJECT] [REMOVE TASK] Task not found!'
 				);
-				response.message = 'Không tìm thấy task!';
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
 				logInfo(
-					'[ERROR PROJECT] [REMOVE TASK] Không tìm thấy task!'
+					'[ERROR PROJECT] [REMOVE TASK] Task not found!'
 				);
-				response.message = 'Không tìm thấy task!';
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: task.projectId });
 			if (userAction.id !== project.creator.id) {
-				logInfo('[ERROR PROJECT] [REMOVE TASK] Không đủ quyền truy cập!!');
-				response.message = 'Không đủ quyền truy cập!';
+				logInfo('[ERROR PROJECT] [REMOVE TASK] User is unthorization!!');
+				response.message = 'User is unthorization!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const conmentsDeleted = await CommentModel.deleteMany({ taskId });
 			if (!conmentsDeleted) {
 				logInfo(
-					'[ERROR PROJECT] [REMOVE TASK] Xóa task thất bại, vui lòng thử lại'
+					'[ERROR PROJECT] [REMOVE TASK] Delete task failed, please try again'
 				);
-				response.message = 'Xóa task thất bại, vui lòng thử lại';
+				response.message = 'Delete task failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const taskDeleted = await TaskModel.deleteOne({ taskId });
 			if (!taskDeleted || taskDeleted.deletedCount < 1) {
 				logInfo(
-					'[ERROR PROJECT] [REMOVE TASK] Xóa task thất bại, vui lòng thử lại'
+					'[ERROR PROJECT] [REMOVE TASK] Delete task failed, please try again'
 				);
-				response.message = 'Xóa task thất bại, vui lòng thử lại';
+				response.message = 'Delete task failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 
 			response.statusCode = 200;
-			response.message = 'Xóa task thành công!';
+			response.message = 'Delete task successfully!';
 			logInfo(
 				`[PROJECT] >> [REMOVE TASK] response ${JSON.stringify(response)}`
 			);
@@ -998,7 +997,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -1012,28 +1011,28 @@ module.exports = {
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Không tìm thấy task!');
-				response.message = 'Không tìm thấy task!';
+				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Task not found!');
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: task.projectId });
 			if (!project) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			if (_.toNumber(req.user.aud) !== project.creator.id) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Không đủ quyền truy cập!');
-				response.message = 'Không đủ quyền truy cập!';
+				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] User is unthorization!');
+				response.message = 'User is unthorization!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const user = await UserModel.findOne({ userId });
 			if (!user) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Không tìm thấy user!');
-				response.message = 'Không tìm thấy user!';
+				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] User not found!');
+				response.message = 'User not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1058,8 +1057,8 @@ module.exports = {
 			});
 
 			if (!assignUserToTask) {
-				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Cập nhật thất bại, vui lòng thử lại');
-				response.message = 'Cập nhật thất bại, vui lòng thử lại';
+				logInfo('[ERROR PROJECT] [ASSIGN USER TASK] Update failed, please try again');
+				response.message = 'Update failed, please try again';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1082,7 +1081,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -1096,28 +1095,28 @@ module.exports = {
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
-				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Không tìm thấy task!');
-				response.message = 'Không tìm thấy task!';
+				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Task not found!');
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const project = await ProjectModel.findOne({ id: task.projectId });
 			if (!project) {
-				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Không tìm thấy project!');
-				response.message = 'Không tìm thấy project!';
+				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Project not found!');
+				response.message = 'Project not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			if (_.toNumber(req.user.aud) !== project.creator.id) {
-				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Không đủ quyền truy cập!');
-				response.message = 'Không đủ quyền truy cập!';
+				logInfo('[ERROR PROJECT] [REMOVE USER TASK] User is unthorization!');
+				response.message = 'User is unthorization!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const user = await UserModel.findOne({ userId });
 			if (!user) {
-				logInfo('[ERROR PROJECT] [REMOVE USER TASK] Không tìm thấy user!');
-				response.message = 'Không tìm thấy user!';
+				logInfo('[ERROR PROJECT] [REMOVE USER TASK] User not found!');
+				response.message = 'User not found!';
 				return res.status(response.statusCode).send(response);
 			}
 			const arrMemberRemoved = task.assigness.filter((mem) => mem.id !== userId);
@@ -1146,7 +1145,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -1164,15 +1163,15 @@ module.exports = {
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
-				logInfo('[ERROR PROJECT] [UPDATE STATUS] Không tìm thấy task!');
-				response.message = 'Không tìm thấy task!';
+				logInfo('[ERROR PROJECT] [UPDATE STATUS] Task not found!');
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
 			const status = await StatusModel.findOne({ statusId });
 			if (!status) {
-				logInfo('[ERROR PROJECT] [UPDATE STATUS] Không tìm thấy status!');
-				response.message = 'Không tìm thấy status!';
+				logInfo('[ERROR PROJECT] [UPDATE STATUS] Status not found!');
+				response.message = 'Status not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1182,7 +1181,7 @@ module.exports = {
 				{ new: true }
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
-				logInfo('[ERROR PROJECT] [UPDATE STATUS] Cập nhật task không thành công!');
+				logInfo('[ERROR PROJECT] [UPDATE STATUS] Update task failed!');
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1208,7 +1207,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -1226,8 +1225,8 @@ module.exports = {
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
-				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] Không tìm thấy task!');
-				response.message = 'Không tìm thấy task!';
+				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] Task not found!');
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1246,8 +1245,8 @@ module.exports = {
 
 			const priority = await PriorityModel.findOne({ priorityId });
 			if (!priority) {
-				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] Không tìm thấy priority!');
-				response.message = 'Không tìm thấy priority!';
+				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] Priority not found!');
+				response.message = 'Priority not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1257,7 +1256,7 @@ module.exports = {
 				{ new: true }
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
-				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] Cập nhật task không thành công!');
+				logInfo('[ERROR PROJECT] [UPDATE PRIORITY] Update task failed!');
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1283,7 +1282,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -1301,8 +1300,8 @@ module.exports = {
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
-				logInfo('[ERROR PROJECT] [UPDATE DESCRIPTION] Không tìm thấy task!');
-				response.message = 'Không tìm thấy task!';
+				logInfo('[ERROR PROJECT] [UPDATE DESCRIPTION] Task not found!');
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1325,7 +1324,7 @@ module.exports = {
 				{ new: true }
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
-				logInfo('[ERROR PROJECT] [UPDATE DESCRIPTION] Cập nhật task không thành công!');
+				logInfo('[ERROR PROJECT] [UPDATE DESCRIPTION] Update task failed!');
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1352,7 +1351,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -1370,8 +1369,8 @@ module.exports = {
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
-				logInfo('[ERROR PROJECT] [UPDATE TIME TRACKING] Không tìm thấy task!');
-				response.message = 'Không tìm thấy task!';
+				logInfo('[ERROR PROJECT] [UPDATE TIME TRACKING] Task not found!');
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1394,7 +1393,7 @@ module.exports = {
 				{ new: true }
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
-				logInfo('[ERROR PROJECT] [UPDATE TIME TRACKING] Cập nhật task không thành công!');
+				logInfo('[ERROR PROJECT] [UPDATE TIME TRACKING] Update task failed!');
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1420,7 +1419,7 @@ module.exports = {
 
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -1438,8 +1437,8 @@ module.exports = {
 
 			const task = await TaskModel.findOne({ taskId });
 			if (!task) {
-				logInfo('[ERROR PROJECT] [UPDATE ESTIMATE] Không tìm thấy task!');
-				response.message = 'Không tìm thấy task!';
+				logInfo('[ERROR PROJECT] [UPDATE ESTIMATE] Task not found!');
+				response.message = 'Task not found!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -1462,7 +1461,7 @@ module.exports = {
 				{ new: true }
 			);
 			if (!_.isObject(updateTask) || !_.get(updateTask, 'id', false)) {
-				logInfo('[ERROR PROJECT] [UPDATE ESTIMATE] Cập nhật task không thành công!');
+				logInfo('[ERROR PROJECT] [UPDATE ESTIMATE] Update task failed!');
 				return res.status(response.statusCode).send(response);
 			}
 

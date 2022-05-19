@@ -17,7 +17,7 @@ module.exports = {
 	getAll: async (req, res) => {
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -33,7 +33,7 @@ module.exports = {
 			}));
 
 			response.statusCode = 200;
-			response.message = 'Lấy danh sách priority thành công!';
+			response.message = 'Get all priority successfully!';
 			response.content = priorityAll;
 			logInfo(
 				`[PRIORITY] >> [GET ALL] response ${JSON.stringify(response)}`
@@ -51,7 +51,7 @@ module.exports = {
 		const { priority } = req.body;
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -67,15 +67,15 @@ module.exports = {
 				return res.status(response.statusCode).send(response);
 			}
 
-			// Checking if the user is already in the database
+			// Checking if the priority is already in the database
 			const priorityExist = await PriorityModel.findOne({
 				priority
 			});
 			if (priorityExist) {
 				logInfo(
-					'[ERROR PRIORITY] [CREATE] Priority đã được sử dụng!'
+					'[ERROR PRIORITY] [CREATE] Priority already exists!'
 				);
-				response.message = 'Priority đã được sử dụng!';
+				response.message = 'Priority already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -85,7 +85,7 @@ module.exports = {
 				alias: removeUnicode(priority)
 			});
 			response.statusCode = 200;
-			response.message = 'Tạo thành công!';
+			response.message = 'Create priority successfully';
 			logInfo(
 				`[PRIORITY] >> [CREATE] response ${JSON.stringify(response)}`
 			);

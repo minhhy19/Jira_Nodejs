@@ -16,7 +16,7 @@ module.exports = {
 	getAllCategory: async (req, res) => {
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -29,7 +29,7 @@ module.exports = {
 			}));
 
 			response.statusCode = 200;
-			response.message = 'Lấy danh sách project category thành công!';
+			response.message = 'Get all project category successfully!';
 			response.content = projectCategoryAll;
 			logInfo(
 				`[PROJECT CATEGORY] >> [GET ALL] response ${JSON.stringify(response)}`
@@ -47,7 +47,7 @@ module.exports = {
 		const { projectCategoryName } = req.body;
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -69,9 +69,9 @@ module.exports = {
 			});
 			if (projectCategoryNameExist) {
 				logInfo(
-					'[ERROR PROJECT] [CREATE] Tên project category đã được sử dụng!'
+					'[ERROR PROJECT] [CREATE] Project category name already exists!'
 				);
-				response.message = 'Tên project category đã được sử dụng!';
+				response.message = 'Project category name already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -79,7 +79,7 @@ module.exports = {
 				projectCategoryName
 			});
 			response.statusCode = 200;
-			response.message = 'Tạo thành công!';
+			response.message = 'Create project category successfully!';
 			logInfo(
 				`[PROJECT CATEGORY] >> [CREATE] response ${JSON.stringify(response)}`
 			);

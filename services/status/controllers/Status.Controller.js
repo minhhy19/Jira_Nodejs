@@ -16,7 +16,7 @@ module.exports = {
 	getAll: async (req, res) => {
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -31,7 +31,7 @@ module.exports = {
 			}));
 
 			response.statusCode = 200;
-			response.message = 'Lấy danh sách status thành công!';
+			response.message = 'Get all status successfully!';
 			response.content = statusAll;
 			logInfo(
 				`[STATUS] >> [GET ALL] response ${JSON.stringify(response)}`
@@ -49,7 +49,7 @@ module.exports = {
 		const { statusName, alias } = req.body;
 		const response = {
 			statusCode: 400,
-			message: 'Xử lý thất bại',
+			message: 'Request failed',
 			content: null
 		};
 		try {
@@ -71,9 +71,9 @@ module.exports = {
 			});
 			if (statusExist) {
 				logInfo(
-					'[ERROR STATUS] [CREATE] Tên status đã được sử dụng!'
+					'[ERROR STATUS] [CREATE] Status name already exists!'
 				);
-				response.message = 'Tên status đã được sử dụng!';
+				response.message = 'Status name already exists!';
 				return res.status(response.statusCode).send(response);
 			}
 
@@ -82,7 +82,7 @@ module.exports = {
 				alias
 			});
 			response.statusCode = 200;
-			response.message = 'Tạo thành công!';
+			response.message = 'Create status successfully!';
 			logInfo(
 				`[STATUS] >> [CREATE] response ${JSON.stringify(response)}`
 			);
