@@ -245,7 +245,7 @@ module.exports = {
 				logInfo(
 					'[ERROR USER] [DELETE USER] Tài khoản khác với tài khoản đã đăng nhập'
 				);
-				return res.status(401).send('Access Denied');
+				return res.status(403).send('Forbidden');
 			}
 
 			const deleted = await UserModel.deleteOne({ userId: id });
