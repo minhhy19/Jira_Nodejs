@@ -34,6 +34,12 @@ module.exports = {
 			req.user = verified;
 		} catch (err) {
 			logInfo(`[VERIFY ACCESS TOKEN] >> [ERROR] ${JSON.stringify(err)}`);
+			if (err.name === 'JsonWebTokenError') {
+				return res.status(401).send('Unauthorized');
+			}
+			if (err.name === 'TokenExpiredError') {
+				return res.status(401).send(err.message || 'jwt expired');
+			}
 			return res.status(400).send('Invalid Token');
 			// res.send({ statusCode: 400, message: err });
 		}
