@@ -10,7 +10,7 @@ module.exports = {
 	signAccessToken: (userId, payload) => new Promise((resolve, reject) => {
 		const secret = process.env.ACCESS_TOKEN_SECRET;
 		const options = {
-			expiresIn: '2d',
+			expiresIn: '7d',
 			audience: userId
 		};
 		jwt.sign(payload, secret, options, (err, token) => {
