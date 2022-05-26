@@ -868,7 +868,7 @@ module.exports = {
 				return res.status(response.statusCode).send(response);
 			}
 
-			const getListCommentByTaskId = await CommentModel.find({ taskId }).sort({ updatedAt: -1 });
+			const getListCommentByTaskId = await CommentModel.find({ taskId }).sort({ createdAt: -1 });
 			const lstComment = getListCommentByTaskId.map((item) => ({
 				id: item.id,
 				idUser: item.userId,
