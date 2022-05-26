@@ -153,10 +153,7 @@ module.exports = {
 	},
 
 	updateComment: async (req, res) => {
-		const param = {
-			id: _.get(req, 'query.id', null),
-			contentComment: _.get(req, 'query.contentComment', null)
-		};
+		const { id, contentComment } = req.body;
 		const response = {
 			statusCode: 400,
 			message: 'Request failed',
@@ -164,10 +161,10 @@ module.exports = {
 		};
 		try {
 			logInfo(
-				`[COMMENT] >> [UPDATE] payload ${JSON.stringify(param)}`
+				`[COMMENT] >> [UPDATE] payload ${JSON.stringify(req.body)}`
 			);
 			// LETS VALIDATE THE DATA
-			const { error } = updateCommentValidation(param);
+			const { error } = updateCommentValidation(req.body);
 
 			if (error) {
 				logInfo(`[ERROR COMMENT] [UPDATE] ${JSON.stringify(error)}`);
@@ -175,7 +172,7 @@ module.exports = {
 				return res.status(response.statusCode).send(response);
 			}
 
-			const comment = await CommentModel.findOne({ id: param.id });
+			const comment = await CommentModel.findOne({ id });
 			if (!comment) {
 				logInfo(
 					'[ERROR COMMENT] [UPDATE] Comment not found!'
@@ -208,8 +205,8 @@ module.exports = {
 
 			const commentDataUpdate = {
 				user: _.pick(user, ['userId', 'name', 'avatar']),
-				contentComment: param.contentComment,
-				alias: removeUnicode(param.contentComment)
+				contentComment,
+				alias: removeUnicode(contentComment)
 			};
 
 			const updateComment = await CommentModel.findOneAndUpdate(
