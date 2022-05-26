@@ -874,7 +874,8 @@ module.exports = {
 				idUser: item.userId,
 				name: item.user.name,
 				avatar: item.user.avatar,
-				commentContent: item.contentComment
+				commentContent: item.contentComment,
+				createdAt: item.createdAt
 			}));
 
 			const taskDetail = await TaskModel.findOne({ taskId });
@@ -904,7 +905,9 @@ module.exports = {
 					'timeTrackingRemaining',
 					'typeId',
 					'priorityId',
-					'projectId'
+					'projectId',
+					'createdAt',
+					'updatedAt'
 				])
 			};
 			logInfo(
