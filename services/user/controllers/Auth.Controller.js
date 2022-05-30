@@ -245,7 +245,18 @@ module.exports = {
 				logInfo(
 					'[ERROR USER] [DELETE USER] The account is different from the one logged in'
 				);
-				return res.status(403).send('Forbidden');
+				return res.status(403).send('The account is different from the one logged in');
+			}
+
+			const projectCreatedByUser = await ProjectModel.findOne({
+				'creator.id': +id
+			});
+			if (projectCreatedByUser) {
+				logInfo(
+					'[ERROR USER] [DELETE USER] User created the project cannot be deleted!'
+				);
+				response.message = 'User created the project cannot be deleted!';
+				return res.status(response.statusCode).send(response);
 			}
 
 			const deleted = await UserModel.deleteOne({ userId: id });
