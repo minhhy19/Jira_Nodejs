@@ -293,7 +293,7 @@ module.exports = {
 
 		try {
 			logInfo(
-				`[USER] >> [DELETE USER] params ${JSON.stringify(req.query)}`
+				`[USER] >> [GET USER BY PROJECTID] params ${JSON.stringify(req.query)}`
 			);
 
 			if (idProject === null) {
